@@ -44,9 +44,14 @@ export default function Home() {
 
       <section className="bg-blue-900 h-screen flex" >
         {/* Side bar code going here. */}
-        <div style={{ width: `${size}px` }} onMouseDown={handleMouseDown}>
+        <div style={{ width: `${size}px` }} >
           <Sidebar />
         </div>
+        <div
+          className={`w-1 top-0 bottom-0 right-0 cursor-col-resize hover:bg-blue-600 ${isResizing ? "bg-blue-600" : ""
+            }`}
+          onMouseDown={handleMouseDown}
+        />
         {/* Body code here going here. */}
         <main className="resize-y border border-white bg-yellow-300 grow">
           <h1>hello</h1>

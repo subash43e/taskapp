@@ -1,6 +1,6 @@
 import React from 'react';
 
- export const Sidebar = () => {
+export const Sidebar = () => {
 
   return (
     <div className={`w-full bg-gray-800 text-white h-screen p-4`}>
@@ -8,32 +8,61 @@ import React from 'react';
       <nav>
         <ul>
           <li className="mb-2">
-            <a href="#" className="flex items-center p-2 rounded-lg hover:bg-gray-700">
+            <a href="#"
+              className="flex items-center p-2 rounded-lg hover:bg-gray-700"
+              draggable={false}
+              onMouseDown={e => e.preventDefault()}
+            >
               <span className="mr-3">📥</span> Inbox
             </a>
           </li>
           <li className="mb-2">
-            <a href="#" className="flex items-center p-2 rounded-lg hover:bg-gray-700">
+            <a
+              href="#"
+              className="flex items-center p-2 rounded-lg hover:bg-gray-700"
+              draggable={false}
+              onMouseDown={e => e.preventDefault()}
+            >
               <span className="mr-3">☀️</span> Today
             </a>
           </li>
           <li className="mb-2">
-            <a href="#" className="flex items-center p-2 rounded-lg hover:bg-gray-700">
+            <a
+              href="#"
+              className="flex items-center p-2 rounded-lg hover:bg-gray-700"
+              draggable={false}
+              onMouseDown={e => e.preventDefault()}
+            >
               <span className="mr-3">📅</span> Calendar
             </a>
           </li>
           <li className="mb-2">
-            <a href="#" className="flex items-center p-2 rounded-lg hover:bg-gray-700">
+            <a
+              href="#"
+              className="flex items-center p-2 rounded-lg hover:bg-gray-700"
+              draggable={false}
+              onMouseDown={e => e.preventDefault()}
+            >
               <span className="mr-3">🔜</span> Upcoming
             </a>
           </li>
           <li className="mb-2">
-            <a href="#" className="flex items-center p-2 rounded-lg hover:bg-gray-700">
+            <a
+              href="#"
+              className="flex items-center p-2 rounded-lg hover:bg-gray-700"
+              draggable={false}
+              onMouseDown={e => e.preventDefault()}
+            >
               <span className="mr-3">✅</span> Completed
             </a>
           </li>
           <li className="mb-2">
-            <a href="#" className="flex items-center p-2 rounded-lg hover:bg-gray-700">
+            <a
+              href="#"
+              className="flex items-center p-2 rounded-lg hover:bg-gray-700"
+              draggable={false}
+              onMouseDown={e => e.preventDefault()}
+            >
               <span className="mr-3">🗑️</span> Trash
             </a>
           </li>
