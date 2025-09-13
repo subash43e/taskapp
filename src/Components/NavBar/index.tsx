@@ -1,7 +1,7 @@
 export default function Navbar() {
     return (
         <>
-            <div className="bg-blue-900 flex">
+            <div className="bg-blue-900 flex border-b border-slate-400">
                 {/* brand */}
                 <div className="">
                     <div className="py-2 px-3 flex">
@@ -14,7 +14,7 @@ export default function Navbar() {
                     </div>
                 </div>
                 {/* navigation example (home) */}
-                <div className="flex px-[5px] justify-center ml-10">
+                <div className="flex px-[5px] justify-center ml-[74px]">
 
                     {/* 1. container create pannanum 
                         2. Container padding and margin kudukanum.
@@ -23,13 +23,15 @@ export default function Navbar() {
                         5. bg color kutugunanum
                         6. Icon add pannanum specific ka home icons
                      */}
+                    <div className="content-center">
+                        <a href="#" className="bg-blue-600 py-1 px-2 items-center flex text-white rounded-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                            </svg>
+                            <h1 className="px-2 text-white">Home</h1>
+                        </a>
+                    </div>
 
-                    <a href="#" className="bg-blue-600 py-1 px-2 items-center flex text-white">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-                        </svg>
-                        <h1 className="px-2 text-white">Home</h1>
-                    </a>
                 </div>
 
                 {/* search bar */}
@@ -49,7 +51,6 @@ export default function Navbar() {
                             </svg>
                         </div>
                     </div>
-
                 </div>
                 {/* setting Gear Icons */}
                 <div className="items-center content-center ml-5 ">
