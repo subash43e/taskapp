@@ -5,7 +5,7 @@ import { Sidebar } from "../Components/Sidebar";
 
 export default function Home() {
 
-  const [size, setSize] = useState(180);
+  const [size, setSize] = useState(230);
   const [isResizing, setIsResizing] = useState(false);
   const [startX, setStartX] = useState(0);
   const [startWidth, setStartWidth] = useState(180);
@@ -27,7 +27,7 @@ export default function Home() {
       const newWidth = startWidth + diff;
       
       // Apply min and max constraints
-      const constrainedWidth = Math.min(Math.max(newWidth, 160), 300);
+      const constrainedWidth = Math.min(Math.max(newWidth, 160), 400);
       setSize(constrainedWidth);
     }
 
