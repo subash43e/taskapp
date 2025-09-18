@@ -2,7 +2,6 @@ export default function Navbar() {
     return (
         <>
             <div className="bg-blue-900 flex border-b border-slate-400">
-                {/* brand */}
                 <div className="">
                     <div className="py-2 px-3 flex">
                         <div>
@@ -13,16 +12,9 @@ export default function Navbar() {
                         </span>
                     </div>
                 </div>
-                {/* navigation example (home) */}
                 <div className="flex px-[5px] justify-center ml-[74px]">
 
-                    {/* 1. container create pannanum 
-                        2. Container padding and margin kudukanum.
-                        3. next bg kudukanum
-                        4. text center pannanum
-                        5. bg color kutugunanum
-                        6. Icon add pannanum specific ka home icons
-                     */}
+                  
                     <div className="content-center">
                         <a href="#" className="bg-blue-600 py-1 px-2 items-center flex text-white rounded-md">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
@@ -34,15 +26,7 @@ export default function Navbar() {
 
                 </div>
 
-                {/* search bar */}
                 <div className="content-center ml-auto">
-                    {/*
-                    Ethuku search bar?
-                        1. searching task.
-                    eppadi create panrathu?
-                        2. oru div create panni athukulla oru input field and search icon kuduthu athu supmit akum pothu athula search agi filter aguramari 
-                        code write pannanum.
-                    */}
                     <div className="relative flex items-center">
                         <input type="search" name="search" id="" className="pl-10 pr-4 py-1 rounded-md border border-white placeholder:text-white caret-white text-white" placeholder="Search..." />
                         <div className="absolute left-3 text-white">
@@ -52,7 +36,6 @@ export default function Navbar() {
                         </div>
                     </div>
                 </div>
-                {/* setting Gear Icons */}
                 <div className="items-center content-center ml-5 ">
                     <a href="/settings" className="text-white">
                         <div className="border rounded-full p-0.5 bg-blue-700">
@@ -63,7 +46,6 @@ export default function Navbar() {
                         </div>
                     </a>
                 </div>
-                {/* profile icons */}
                 <div className="items-center content-center px-3">
                     <a href="" className="text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-7">

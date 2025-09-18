@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState, setSidebarSize, setIsResizing, setStartX, setStartWidth } from '../store';
 import Navbar from "../Components/NavBar";
 import { Sidebar } from "../Components/Sidebar";
+import TaskCreation from "../Components/Task_Creation";
 
 
 export default function Home() {
@@ -46,16 +47,14 @@ export default function Home() {
   }, [isResizing, startX, startWidth, dispatch, size, collapsed]);
 
   return (
-    <div>
-      {/* Navigation for Task Managing Application. */}
+    <div className="min-h-screen w-full flex flex-col">
       <section>
         <nav>
           <Navbar />
         </nav>
       </section>
-      <section className="bg-blue-900 h-screen flex" >
-        {/* Side bar code going here. */}
-        <div style={{ width: collapsed ? '72px' : `${size}px` }} className="min-w-[56px] max-w-[300px]" >
+      <section className="flex-1 flex bg-blue-900 overflow-hidden" >
+        <div style={{ width: collapsed ? '72px' : `${size}px` }} className="min-w-[56px] max-w-[300px]">
           <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
         </div>
         {!collapsed && (
@@ -64,9 +63,8 @@ export default function Home() {
             onMouseDown={handleMouseDown}
           />
         )}
-        {/* Body code here going here. */}
-        <main className="resize-y  bg-slate-700 grow text-white">
-          <h1>hello</h1>
+        <main className="flex-1 overflow-auto bg-slate-700 text-white">
+          <TaskCreation />
         </main>
       </section>
     </div>
