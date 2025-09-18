@@ -1,15 +1,19 @@
 import React from 'react';
+import './sidebar-animations.css';
 
-export const Sidebar = () => {
-  const [collapsed, setCollapsed] = React.useState(false);
+export interface SidebarProps {
+  collapsed: boolean;
+  setCollapsed: (collapsed: boolean) => void;
+}
 
+export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   return (
-    <div className={`w-full bg-gray-800 text-white h-screen p-4 relative select-none`}>
-      <h2 className={`text-2xl font-bold mb-6 ${collapsed ? "hidden" : "block"}`}>Tasks</h2>
+    <div className='w-full bg-gray-800 text-white h-screen p-4 relative select-none transition-all duration-300'>
+      <h2 className={`text-2xl font-bold mb-4 ${collapsed ? "hidden" : "block"}`}>Tasks</h2>
       <div>
         {!collapsed ? (
           <div
-            className="text-white absolute right-4 top-6 cursor-pointer"
+            className="text-white absolute right-4 top-6 cursor-pointer animate-slide-in-left duration-300"
             onClick={() => setCollapsed(true)}
             title="Collapse sidebar"
           >
@@ -20,7 +24,7 @@ export const Sidebar = () => {
           </div>
         ) : (
           <div
-            className="text-white absolute right-4 top-6 cursor-pointer"
+            className="text-white cursor-pointer mb-2 flex items-center p-2 rounded-lg hover:bg-gray-700 animate-slide-in-right duration-300"
             onClick={() => setCollapsed(false)}
             title="Expand sidebar"
           >
@@ -92,9 +96,9 @@ export const Sidebar = () => {
           </a>
         </li>
       </ul>
-      <div className="mt-8">
-        <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center">
-          <span className="mr-2">+</span> New Task
+      <div className="">
+        <button className=" min-w-[40px] max-w-[170px] w-full bg-blue-600 hover:bg-blue-700 text-white font-bold p-2 rounded-lg flex text-center justify-center">
+          <span className="">{!collapsed ? "+ New Task" : "+"}</span>
         </button>
       </div>
     </div>

@@ -1,4 +1,5 @@
 "use client"
+import React from "react";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, setSidebarSize, setIsResizing, setStartX, setStartWidth } from '../store';
@@ -12,8 +13,10 @@ export default function Home() {
   const isResizing = useSelector((state: RootState) => state.ui.isResizing);
   const startX = useSelector((state: RootState) => state.ui.startX);
   const startWidth = useSelector((state: RootState) => state.ui.startWidth);
+  const [collapsed, setCollapsed] = React.useState(false);
 
   const handleMouseDown = (e: React.MouseEvent) => {
+    if (collapsed) return;
     e.preventDefault();
     dispatch(setIsResizing(true));
     dispatch(setStartX(e.clientX));
@@ -21,13 +24,14 @@ export default function Home() {
   };
 
   useEffect(() => {
+    if (collapsed) return;
     const handlingMouseMoving = (e: MouseEvent) => {
       if (!isResizing) return;
       e.preventDefault();
       const currentX = e.clientX;
       const diff = currentX - startX;
       const newWidth = startWidth + diff;
-      const constrainedWidth = Math.min(Math.max(newWidth, 160), 300);
+      const constrainedWidth = Math.min(Math.max(newWidth, 165), 300);
       dispatch(setSidebarSize(constrainedWidth));
     };
     const handleMouseUp = () => dispatch(setIsResizing(false));
@@ -39,7 +43,7 @@ export default function Home() {
       window.removeEventListener("mousemove", handlingMouseMoving);
       window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [isResizing, startX, startWidth, dispatch, size]);
+  }, [isResizing, startX, startWidth, dispatch, size, collapsed]);
 
   return (
     <div>
@@ -51,18 +55,21 @@ export default function Home() {
       </section>
       <section className="bg-blue-900 h-screen flex" >
         {/* Side bar code going here. */}
-        <div style={{ width: `${size}px` }} className="min-w-[160px] max-w-[300px]" >
-          <Sidebar />
+        <div style={{ width: collapsed ? '72px' : `${size}px` }} className="min-w-[56px] max-w-[300px]" >
+          <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
         </div>
-        <div
-          className={`w-[2px] hover:w-1 top-0 bottom-0 right-0 cursor-col-resize hover:bg-blue-600 ${isResizing ? "bg-blue-600" : ""}`}
-          onMouseDown={handleMouseDown}
-        />
+        {!collapsed && (
+          <div
+            className={`w-[2px] hover:w-1 top-0 bottom-0 right-0 cursor-col-resize hover:bg-blue-600 ${isResizing ? "bg-blue-600" : ""}`}
+            onMouseDown={handleMouseDown}
+          />
+        )}
         {/* Body code here going here. */}
-        <main className="resize-y border border-white bg-yellow-300 grow">
+        <main className="resize-y  bg-slate-700 grow text-white">
           <h1>hello</h1>
         </main>
       </section>
     </div>
   );
 }
+
