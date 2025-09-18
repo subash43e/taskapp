@@ -15,6 +15,7 @@ export default function Home() {
   const startX = useSelector((state: RootState) => state.ui.startX);
   const startWidth = useSelector((state: RootState) => state.ui.startWidth);
   const [collapsed, setCollapsed] = React.useState(false);
+  const showTaskCreation = useSelector((state: RootState) => state.ui.showTaskCreation);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (collapsed) return;
@@ -64,7 +65,7 @@ export default function Home() {
           />
         )}
         <main className="flex-1 overflow-auto bg-slate-700 text-white">
-          <TaskCreation />
+          {showTaskCreation && <TaskCreation />}
         </main>
       </section>
     </div>

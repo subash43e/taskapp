@@ -1,4 +1,6 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import { showTaskCreation } from '../../store';
 import './sidebar-animations.css';
 
 export interface SidebarProps {
@@ -7,6 +9,7 @@ export interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
+  const dispatch = useDispatch();
   return (
     <div className='w-full h-full bg-gray-800 text-white p-4 relative select-none transition-all duration-300 flex flex-col'>
       <h2 className={`text-2xl font-bold mb-4 ${collapsed ? "hidden" : "block"}`}>Tasks</h2>
@@ -94,8 +97,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
           </a>
         </li>
         <li className="mt-auto" title='Add New Task'>
-          <button className=" min-w-[40px] max-w-[170px] w-full bg-blue-600 hover:bg-blue-700 text-white font-bold p-2 rounded-lg flex text-center justify-center">
-            <span className="">{!collapsed ? "+ New Task" : "+"}</span>
+          <button
+            className="min-w-[40px] max-w-[170px] w-full bg-blue-600 hover:bg-blue-700 text-white font-bold p-2 rounded-lg flex text-center justify-center"
+            onClick={() => dispatch(showTaskCreation())}
+          >
+            <span>{!collapsed ? "+ New Task" : "+"}</span>
           </button>
         </li>
       </ul>
