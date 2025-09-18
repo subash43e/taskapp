@@ -38,7 +38,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
       </div>
       <ul className="flex flex-col h-full">
         <li className="mb-2" title='Inbox'>
-          <a href="#"
+          <a href="Inbox  "
             className="flex items-center p-2 rounded-lg hover:bg-gray-700"
             draggable={false}
             onMouseDown={e => e.preventDefault()}
