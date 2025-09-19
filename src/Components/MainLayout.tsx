@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, setSidebarSize, setIsResizing, setStartX, setStartWidth } from '../store';
 import Navbar from "./NavBar";
-import { Sidebar } from "./Sidebar";
+import { Sidebar } from "./Sidebar/Index";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const dispatch = useDispatch();
@@ -59,7 +59,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
             onMouseDown={handleMouseDown}
           />
         )}
-        <main className="flex-1 overflow-auto bg-slate-700 text-white">
+        <main className="flex-1 overflow-auto bg-[#111827] text-white">
           {children}
         </main>
       </section>
