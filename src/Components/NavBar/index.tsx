@@ -1,7 +1,7 @@
 export default function Navbar() {
     return (
         <>
-            <div className="bg-blue-900 flex border-b border-slate-400">
+            <nav className="bg-blue-900 flex border-b border-slate-400">
                 <div className="">
                     <div className="py-2 px-3 flex">
                         <div>
@@ -54,7 +54,7 @@ export default function Navbar() {
                     </a>
                 </div>
 
-            </div>
+            </nav>
         </>
     )
 }

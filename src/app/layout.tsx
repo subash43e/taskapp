@@ -2,6 +2,7 @@
 
 import "./globals.css";
 import ReduxProvider from '../ReduxProvider';
+import MainLayout from "../Components/MainLayout";
 
 export default function RootLayout({
   children,
@@ -12,9 +13,11 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <ReduxProvider>
-          {children}
+          <MainLayout>
+            {children}
+          </MainLayout>
         </ReduxProvider>
       </body>
-    </html>
+    </html >
   );
 }
