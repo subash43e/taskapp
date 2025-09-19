@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState, setSidebarSize, setIsResizing, setStartX, setStartWidth } from '../store';
 import Navbar from "./NavBar";
 import { Sidebar } from "./Sidebar/Index";
+import TaskCreation from "./Task_Creation/Index";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const dispatch = useDispatch();
@@ -12,6 +13,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   const isResizing = useSelector((state: RootState) => state.ui.isResizing);
   const startX = useSelector((state: RootState) => state.ui.startX);
   const startWidth = useSelector((state: RootState) => state.ui.startWidth);
+  const showTaskCreation = useSelector((state: RootState) => state.ui.showTaskCreation);
   const [collapsed, setCollapsed] = React.useState(false);
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -63,6 +65,12 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
           {children}
         </main>
       </section>
+      {/* Task Creation Modal */}
+      {showTaskCreation && (
+        <div className="fixed inset-0 bg-black/80 bg-opacity-50 flex items-center justify-center z-50">
+          <TaskCreation />
+        </div>
+      )}
     </div>
   );
 }

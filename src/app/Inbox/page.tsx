@@ -22,11 +22,6 @@ export default function Home() {
             title={task_card_title}
             dueDate={task_card_due_date}
           />
-          <Task_Card 
-            color={task_card_Color_Indicator}
-            title={task_card_title}
-            dueDate={task_card_due_date}
-          />
           {/* Add more cards below as needed */}
         </section>
       </div>

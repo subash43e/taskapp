@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { showTaskCreation } from '../../store';
+import { showTaskCreation  } from '../../store';
 import './sidebar-animations.css';
 
 export interface SidebarProps {
@@ -10,6 +10,7 @@ export interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   const dispatch = useDispatch();
+
   return (
     <div className='w-full h-full bg-gray-800 text-white p-4 relative select-none transition-all duration-300 flex flex-col'>
       <h2 className={`text-2xl font-bold mb-4 ${collapsed ? "hidden" : "block"}`}>Tasks</h2>

@@ -16,7 +16,7 @@ export default function TaskCreation() {
             <div className="bg-gray-800 rounded-2xl shadow-lg p-8 w-[520px] max-w-[95vw]">
                 <div className="flex justify-between items-center mb-3">
                     <h2 className="text-white font-bold text-2xl mb-6">Create New Task</h2>
-                    <div className="mb-6 hover:bg-red-400 rounded-2xl bg-red-600" onClick={() => dispatch(hideTaskCreation())}>
+                    <div className="mb-6 hover:bg-red-400 rounded-xl bg-red-600 text-white" onClick={() => dispatch(hideTaskCreation())}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                         </svg>
@@ -104,7 +104,7 @@ export default function TaskCreation() {
                     <div className="flex gap-2 items-center justify-between">
                         <button
                             type="button"
-                            className="bg-red-600 hover:bg-red-700 text-white font-semibold text-base border-none rounded-lg px-4 py-2.5 cursor-pointer transition-colors"
+                            className="bg-red-600 hover:bg-red-400 text-white font-semibold text-base border-none rounded-lg px-4 py-2.5 cursor-pointer transition-colors"
                             onClick={() => dispatch(hideTaskCreation())}
                         >
                             Close
