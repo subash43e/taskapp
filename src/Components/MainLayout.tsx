@@ -4,8 +4,8 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, setSidebarSize, setIsResizing, setStartX, setStartWidth } from '../store';
 import Navbar from "./NavBar";
-import { Sidebar } from "./Sidebar/Index";
-import TaskCreation from "./Task_Creation/Index";
+import { Sidebar } from "./Sidebar";
+import TaskCreation from "./Task_Creation";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const dispatch = useDispatch();

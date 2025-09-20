@@ -1,7 +1,4 @@
 "use client"
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-
 export default function Home() {
 
   // Simulated tasks array. Replace with actual data fetching logic.
@@ -20,8 +17,6 @@ export default function Home() {
       </div>
     );
   }
-
-
 
   // const router = useRouter();
   // useEffect(() => {

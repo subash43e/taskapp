@@ -1,7 +1,6 @@
 "use client"
 
-import Task_Card from "@/src/Components/Task_Card/Index";
-
+import Task_Card from "@/src/Components/Task_Card/index";
 
 export default function Home() {
   const task_card_Color_Indicator = "bg-yellow-400";
