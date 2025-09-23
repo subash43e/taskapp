@@ -11,6 +11,11 @@ export default function TaskCreation() {
     const dispatch = useDispatch();
     const { taskName, description, dueDate, priority, category, project } = useSelector((state: RootState) => state.taskCreation);
 
+    const manageSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log({ taskName, description, dueDate, priority, category, project });
+    }
+
     return (
         <div className="w-full h-full flex justify-center items-start p-6 overflow-y-auto">
             <div className="bg-gray-800 rounded-2xl shadow-lg p-8 w-[520px] max-w-[95vw]">
@@ -22,7 +27,7 @@ export default function TaskCreation() {
                         </svg>
                     </div>
                 </div>
-                <form>
+                <form onSubmit={manageSubmit}>
                     <label className="text-gray-300 font-medium text-sm">Task Name</label>
                     <input
                         type="text"
@@ -110,7 +115,7 @@ export default function TaskCreation() {
                             Close
                         </button>
                         <button
-                            type="button"
+                            type="submit"
                             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-base border-none rounded-lg px-4 py-2.5 cursor-pointer flex items-center gap-2 transition-colors"
                         >
                             <span className="font-bold">+</span>

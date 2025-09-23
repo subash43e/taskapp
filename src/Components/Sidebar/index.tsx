@@ -2,6 +2,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { showTaskCreation  } from '../../store';
 import './sidebar-animations.css';
+import Link from 'next/link';
 
 export interface SidebarProps {
   collapsed: boolean;
@@ -39,68 +40,68 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
       </div>
       <ul className="flex flex-col h-full">
         <li className="mb-2" title='Inbox'>
-          <a href="Inbox  "
+          <Link href="Inbox"
             className="flex items-center p-2 rounded-lg hover:bg-gray-700"
             draggable={false}
             onMouseDown={e => e.preventDefault()}
           >
             <span className="mr-3">{!collapsed ? "📥 Inbox" : "📥"}</span>
-          </a>
+          </Link>
         </li>
         <li className="mb-2" title='Today'>
-          <a
-            href="#"
+          <Link
+            href="today"
             className="flex items-center p-2 rounded-lg hover:bg-gray-700"
             draggable={false}
             onMouseDown={e => e.preventDefault()}
           >
             <span className="mr-3">{!collapsed ? "☀️ Today" : "☀️"}</span>
-          </a>
+          </Link>
         </li>
         <li className="mb-2" title='Calendar'>
-          <a
-            href="#"
+          <Link
+            href="calendar"
             className="flex items-center p-2 rounded-lg hover:bg-gray-700"
             draggable={false}
             onMouseDown={e => e.preventDefault()}
           >
             <span className="mr-3">{!collapsed ? "📅 Calendar" : "📅"}</span>
-          </a>
+          </Link>
         </li>
         <li className="mb-2" title='Upcoming'>
-          <a
-            href="#"
+          <Link
+            href="upcoming"
             className="flex items-center p-2 rounded-lg hover:bg-gray-700"
             draggable={false}
             onMouseDown={e => e.preventDefault()}
           >
             <span className="mr-3">{!collapsed ? "🔜 Upcoming" : "🔜"}</span>
-          </a>
+          </Link>
         </li>
         <li className="mb-2" title='Completed'>
-          <a
-            href="#"
+          <Link
+            href="completed"
             className="flex items-center p-2 rounded-lg hover:bg-gray-700"
             draggable={false}
             onMouseDown={e => e.preventDefault()}
           >
             <span className="mr-3">{!collapsed ? "✅ Completed" : "✅"}</span>
-          </a>
+          </Link>
         </li>
         <li className="mb-2" title='Trash'>
-          <a
-            href="#"
+          <Link
+            href="trash"
             className="flex items-center p-2 rounded-lg hover:bg-gray-700"
             draggable={false}
             onMouseDown={e => e.preventDefault()}
           >
             <span className="mr-3">{!collapsed ? "🗑️ Trash" : "🗑️"}</span>
-          </a>
+          </Link>
         </li>
         <li className="mt-auto" title='Add New Task'>
           <button
             className="min-w-[40px] max-w-[170px] w-full bg-blue-600 hover:bg-blue-700 text-white font-bold p-2 rounded-lg flex text-center justify-center"
-            onClick={() => dispatch(showTaskCreation())}
+            onClick={() => dispatch(showTaskCreation())}  
           >
             <span>{!collapsed ? "+ New Task" : "+"}</span>
           </button>

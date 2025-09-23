@@ -29,11 +29,23 @@ const taskCreationSlice = createSlice({
 			state.category = action.payload;
 		},
 		setProject(state, action) {
-			state.project = action.payload;
+			state.project = action.payload;	
 		},
 		resetTaskForm(state) {
 			Object.assign(state, initialState);
 		},
+		saveTaskLocally(state) {
+			const task = {
+				taskName: state.taskName,
+				description: state.description,
+				dueDate: state.dueDate,
+				priority: state.priority,
+				category: state.category,
+				project: state.project,
+			};
+
+			localStorage.setItem('savedTask', JSON.stringify(task));
+		}
 	},
 });
 
