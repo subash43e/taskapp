@@ -2,6 +2,8 @@ import React from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, hideTaskCreation } from '../../store';
 import { setTaskName, setDescription, setDueDate, setPriority, setCategory, setProject } from '../../taskCreationSlice';
+import { db } from "@/src/Firebase/firebase";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 
 const priorities = ["Low", "Medium", "High"];
 const categories = ["Design", "Development", "Testing", "Research"];
@@ -11,9 +13,48 @@ export default function TaskCreation() {
     const dispatch = useDispatch();
     const { taskName, description, dueDate, priority, category, project } = useSelector((state: RootState) => state.taskCreation);
 
-    const manageSubmit = (e: React.FormEvent) => {
+    const manageSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log({ taskName, description, dueDate, priority, category, project });
+        if (!taskName.trim()) {
+            alert("Task Name is required");
+            return;
+        }
+        if (!description.trim()) {
+            alert("Description is required");
+            return;
+        }
+        if (!dueDate) {
+            alert("Due Date is required");
+            return;
+        }
+        if (!priority) {
+            alert("Priority is required");
+            return;
+        }
+        if (!category) {
+            alert("Category is required");
+            return;
+        }
+        if (!project) {
+            alert("Project is required");
+            return;
+        }
+        await addDoc(collection(db, "tasks"), {
+            taskName,
+            description,
+            dueDate,
+            priority,
+            category,
+            project,
+            createdAt: serverTimestamp()
+        });
+        dispatch(hideTaskCreation());
+        dispatch(setTaskName(''));
+        dispatch(setDescription(''));
+        dispatch(setDueDate(''));
+        dispatch(setPriority(''));
+        dispatch(setCategory(''));
+        dispatch(setProject(''));
     }
 
     return (
