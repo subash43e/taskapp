@@ -36,7 +36,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder = 'Search..
                         onChange={handleInputChange}
                         aria-label="Search"
                     />
-                    <div className="absolute left-3 text-gray-400 border">
+                    <div className="absolute left-3 text-gray-400">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
                             <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                         </svg>
@@ -45,7 +45,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder = 'Search..
                         <button
                             type="button"
                             onClick={handleClear}
-                            className="absolute right-3 text-gray-400 hover:text-white transition-colors border"
+                            className="absolute right-3 text-gray-400 hover:text-white transition-colors"
                             aria-label="Clear search"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">

@@ -40,13 +40,13 @@ export default function Home() {
             />
           </div>
           <div className="flex gap-4">
-            <button className="flex items-center gap-2 bg-[#232b38] rounded-lg px-6 py-3 text-gray-200 shadow hover:bg-[#2c3545] transition-colors">
+            <button className="flex items-center gap-2 cursor-pointer bg-[#232b38] rounded-lg px-6 py-3 text-gray-200 shadow hover:bg-[#2c3545] transition-colors">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L15 13.414V19a1 1 0 01-1.447.894l-4-2A1 1 0 019 16v-2.586L3.293 6.707A1 1 0 013 6V4z" />
               </svg>
               Filter
             </button>
-            <button className="flex items-center gap-2 bg-[#232b38] rounded-lg px-6 py-3 text-gray-200 shadow hover:bg-[#2c3545] transition-colors">
+            <button className="flex items-center gap-2 cursor-pointer bg-[#232b38] rounded-lg px-6 py-3 text-gray-200 shadow hover:bg-[#2c3545] transition-colors">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
               </svg>
