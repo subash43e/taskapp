@@ -7,6 +7,7 @@ const initialState = {
 	priority: '',
 	category: '',
 	project: '',
+	color: '#2196f3', // default color
 };
 
 const taskCreationSlice = createSlice({
@@ -31,6 +32,9 @@ const taskCreationSlice = createSlice({
 		setProject(state, action) {
 			state.project = action.payload;	
 		},
+        setColor(state, action) {
+            state.color = action.payload;
+        },
 		resetTaskForm(state) {
 			Object.assign(state, initialState);
 		},
@@ -56,6 +60,7 @@ export const {
 	setPriority,
 	setCategory,
 	setProject,
+	setColor,
 	resetTaskForm,
 } = taskCreationSlice.actions;
 

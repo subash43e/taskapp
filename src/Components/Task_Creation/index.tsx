@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, hideTaskCreation } from '../../store';
-import { setTaskName, setDescription, setDueDate, setPriority, setCategory, setProject } from '../../taskCreationSlice';
+import { setTaskName, setDescription, setDueDate, setPriority, setCategory, setProject, setColor } from '../../taskCreationSlice';
 import { db } from "@/src/Firebase/firebase";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 
@@ -11,34 +11,27 @@ const projects = ["Website Redesign", "Mobile App", "API Integration"];
 
 export default function TaskCreation() {
     const dispatch = useDispatch();
-    const { taskName, description, dueDate, priority, category, project } = useSelector((state: RootState) => state.taskCreation);
+    const { taskName, description, dueDate, priority, category, project, color } = useSelector((state: RootState) => state.taskCreation);
 
     const manageSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!taskName.trim()) {
-            alert("Task Name is required");
-            return;
+
+        const requiredFields = [
+            { key: "taskName", value: taskName, label: "Task Name" },
+            { key: "description", value: description, label: "Description" },
+            { key: "dueDate", value: dueDate, label: "Due Date" },
+            { key: "priority", value: priority, label: "Priority" },
+            { key: "category", value: category, label: "Category" },
+            { key: "project", value: project, label: "Project" },
+        ];
+
+        for (const field of requiredFields) {
+            if (!field.value || (typeof field.value === "string" && !field.value.trim())) {
+                alert(`${field.label} is required`);
+                return;
+            }
         }
-        if (!description.trim()) {
-            alert("Description is required");
-            return;
-        }
-        if (!dueDate) {
-            alert("Due Date is required");
-            return;
-        }
-        if (!priority) {
-            alert("Priority is required");
-            return;
-        }
-        if (!category) {
-            alert("Category is required");
-            return;
-        }
-        if (!project) {
-            alert("Project is required");
-            return;
-        }
+
         await addDoc(collection(db, "tasks"), {
             taskName,
             description,
@@ -46,6 +39,7 @@ export default function TaskCreation() {
             priority,
             category,
             project,
+            color,
             createdAt: serverTimestamp()
         });
         dispatch(hideTaskCreation());
@@ -55,6 +49,7 @@ export default function TaskCreation() {
         dispatch(setPriority(''));
         dispatch(setCategory(''));
         dispatch(setProject(''));
+        dispatch(setColor('#2196f3'));
     }
 
     return (
@@ -129,6 +124,16 @@ export default function TaskCreation() {
                                     </option>
                                 ))}
                             </select>
+                        </div>
+                        <div className="flex flex-col">
+                            <label className="text-gray-300 font-medium text-sm mb-2">Color</label>
+                            <input
+                                type="color"
+                                value={color}
+                                onChange={e => dispatch(setColor(e.target.value))}
+                                className="w-12 h-12 p-0 border-none bg-transparent cursor-pointer self-start"
+                                title="Pick a color for this task"
+                            />
                         </div>
                         <div className="flex-1">
                             <label className="text-gray-300 font-medium text-sm">Project</label>
