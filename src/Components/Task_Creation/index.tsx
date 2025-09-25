@@ -1,10 +1,12 @@
 import React from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, hideTaskCreation } from '../../store';
+import { showNotification } from '../../notificationSlice';
 import { 
   setTaskName, 
   setDescription, 
   setDueDate, 
+  setDueTime,
   setPriority, 
   setCategory, 
   setColor, 
@@ -25,6 +27,7 @@ import {
 } from '../../taskCreationSlice';
 import { db } from "@/src/Firebase/firebase";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import notificationScheduler from "../../services/notificationScheduler";
 
 const priorities = ["Low", "Medium", "High"];
 // Using categories and tags from Redux store now
@@ -37,6 +40,7 @@ export default function TaskCreation() {
         taskName, 
         description, 
         dueDate, 
+        dueTime,
         priority, 
         category, 
         color, 
@@ -85,6 +89,7 @@ export default function TaskCreation() {
             { key: "taskName", value: taskName, label: "Task Name" },
             { key: "description", value: description, label: "Description" },
             { key: "dueDate", value: dueDate, label: "Due Date" },
+            { key: "dueTime", value: dueTime, label: "Due Time" },
             { key: "priority", value: priority, label: "Priority" },
             { key: "category", value: categoryInput, label: "Category" },
         ];
@@ -106,24 +111,48 @@ export default function TaskCreation() {
             const cleanedTags = tags.filter(tag => tag.trim() !== "");
             
             // Save the task to Firestore
-            await addDoc(collection(db, "tasks"), {
+            const docRef = await addDoc(collection(db, "tasks"), {
                 taskName: taskName.trim(),
                 description: description.trim(),
                 dueDate,
+                dueTime,
                 priority,
                 category: categoryInput.trim(),
                 tags: cleanedTags,
                 color,
+                completed: false,
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp()
             });
             
+            // Schedule reminders for the new task if it has date and time
+            if (dueDate && dueTime) {
+                notificationScheduler.scheduleTaskReminder({
+                    id: docRef.id,
+                    taskName: taskName.trim(),
+                    dueDate,
+                    dueTime,
+                    userEmail: "user@example.com", // This should come from user auth
+                    category: categoryInput.trim(),
+                    priority
+                });
+                
+                console.log(`Scheduled reminders for task: ${taskName}`);
+            }
+            
             // Reset form after successful submission
             dispatch(hideTaskCreation());
             dispatch(resetTaskForm());
+            dispatch(showNotification({
+                message: `Task "${taskName}" created successfully! ${dueTime ? 'Reminders have been set.' : ''}`,
+                type: 'success'
+            }));
         } catch (error) {
             console.error("Error adding task: ", error);
-            alert("Failed to create task. Please try again.");
+            dispatch(showNotification({
+                message: "Failed to create task. Please try again.",
+                type: 'error'
+            }));
         }
     };
 
@@ -169,6 +198,18 @@ export default function TaskCreation() {
                                 value={dueDate}
                                 onChange={e => dispatch(setDueDate(e.target.value))}
                                 className="w-full px-4 py-2.5 rounded-lg border border-gray-600 bg-gray-700/50 text-white text-base outline-none focus:border-blue-500 transition-colors pr-10"
+                                style={{
+                                    colorScheme: "dark"
+                                }}
+                            />
+                        </div>
+                        <div className="flex-1">
+                            <label className="text-gray-300 font-medium text-sm block mb-2">Due Time</label>
+                            <input
+                                type="time"
+                                value={dueTime}
+                                onChange={e => dispatch(setDueTime(e.target.value))}
+                                className="w-full px-4 py-2.5 rounded-lg border border-gray-600 bg-gray-700/50 text-white text-base outline-none focus:border-blue-500 transition-colors"
                                 style={{
                                     colorScheme: "dark"
                                 }}

@@ -1,27 +1,21 @@
 "use client"
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
 export default function Home() {
-
-  // Simulated tasks array. Replace with actual data fetching logic.
-  const tasks = []; // Example: const tasks = useTasksFromStoreOrApi();
-
-  if (tasks.length === 0) {
-    return (
-      <div>
-        <p>Please click the "New Task" button and create a new task.</p>
+  const router = useRouter();
+  
+  useEffect(() => {
+    router.replace("/Inbox");
+  }, [router]);
+  
+  return (
+    <div className="flex items-center justify-center h-full">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2"></div>
+        <p className="text-gray-400">Redirecting to Inbox...</p>
       </div>
-    );
-  } else {
-    return (
-      <div>
-        <p>Please check your inbox for tasks.</p>
-      </div>
-    );
-  }
-
-  // const router = useRouter();
-  // useEffect(() => {
-  //   router.replace("/Inbox");
-  // }, [router]);
-  // return null;
+    </div>
+  );
 }
 

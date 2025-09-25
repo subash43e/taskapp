@@ -7,6 +7,7 @@ const initialState = {
 	taskName: '',
 	description: '',
 	dueDate: '',
+	dueTime: '', // Add time field
 	priority: '',
 	category: '',
 	project: '',
@@ -36,6 +37,9 @@ const taskCreationSlice = createSlice({
 		},
 		setDueDate(state, action) {
 			state.dueDate = action.payload;
+		},
+		setDueTime(state, action) {
+			state.dueTime = action.payload;
 		},
 		setPriority(state, action) {
 			state.priority = action.payload;
@@ -156,6 +160,7 @@ const taskCreationSlice = createSlice({
 				taskName: state.taskName,
 				description: state.description,
 				dueDate: state.dueDate,
+				dueTime: state.dueTime,
 				priority: state.priority,
 				category: state.category,
 				project: state.project,
@@ -178,6 +183,7 @@ export const {
 	setTaskName,
 	setDescription,
 	setDueDate,
+	setDueTime,
 	setPriority,
 	setCategory,
 	setProject,

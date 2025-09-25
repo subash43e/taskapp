@@ -40,7 +40,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
       </div>
       <ul className="flex flex-col h-full">
         <li className="mb-2" title='Inbox'>
-          <Link href="Inbox"
+          <Link href="/Inbox"
             className="flex items-center p-2 rounded-lg hover:bg-gray-700"
             draggable={false}
             onMouseDown={e => e.preventDefault()}
@@ -50,7 +50,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
         </li>
         <li className="mb-2" title='Today'>
           <Link
-            href="today"
+            href="/Today"
             className="flex items-center p-2 rounded-lg hover:bg-gray-700"
             draggable={false}
             onMouseDown={e => e.preventDefault()}
@@ -58,19 +58,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
             <span className="mr-3">{!collapsed ? "☀️ Today" : "☀️"}</span>
           </Link>
         </li>
-        <li className="mb-2" title='Calendar'>
-          <Link
-            href="calendar"
-            className="flex items-center p-2 rounded-lg hover:bg-gray-700"
-            draggable={false}
-            onMouseDown={e => e.preventDefault()}
-          >
-            <span className="mr-3">{!collapsed ? "📅 Calendar" : "📅"}</span>
-          </Link>
-        </li>
         <li className="mb-2" title='Upcoming'>
           <Link
-            href="upcoming"
+            href="/Upcoming"
             className="flex items-center p-2 rounded-lg hover:bg-gray-700"
             draggable={false}
             onMouseDown={e => e.preventDefault()}
@@ -80,22 +70,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
         </li>
         <li className="mb-2" title='Completed'>
           <Link
-            href="completed"
+            href="/Completed"
             className="flex items-center p-2 rounded-lg hover:bg-gray-700"
             draggable={false}
             onMouseDown={e => e.preventDefault()}
           >
             <span className="mr-3">{!collapsed ? "✅ Completed" : "✅"}</span>
-          </Link>
-        </li>
-        <li className="mb-2" title='Trash'>
-          <Link
-            href="trash"
-            className="flex items-center p-2 rounded-lg hover:bg-gray-700"
-            draggable={false}
-            onMouseDown={e => e.preventDefault()}
-          >
-            <span className="mr-3">{!collapsed ? "🗑️ Trash" : "🗑️"}</span>
           </Link>
         </li>
         <li className="mt-auto" title='Add New Task'>

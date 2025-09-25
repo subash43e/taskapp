@@ -1,5 +1,6 @@
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import taskCreationReducer from './taskCreationSlice';
+import notificationReducer from './notificationSlice';
 
 // Example: UI state for sidebar size
 const uiSlice = createSlice({
@@ -10,6 +11,8 @@ const uiSlice = createSlice({
     startX: 0,
     startWidth: 180,
     showTaskCreation: false,
+    showTaskEdit: false,
+    editingTask: null as any,
   },
   reducers: {
     setSidebarSize(state, action) {
@@ -33,15 +36,24 @@ const uiSlice = createSlice({
     toggleTaskCreation(state) {
       state.showTaskCreation = !state.showTaskCreation;
     },
+    showTaskEdit(state, action) {
+      state.showTaskEdit = true;
+      state.editingTask = action.payload;
+    },
+    hideTaskEdit(state) {
+      state.showTaskEdit = false;
+      state.editingTask = null;
+    },
   },
 });
 
-export const { setSidebarSize, setIsResizing, setStartX, setStartWidth, showTaskCreation, hideTaskCreation, toggleTaskCreation } = uiSlice.actions;
+export const { setSidebarSize, setIsResizing, setStartX, setStartWidth, showTaskCreation, hideTaskCreation, toggleTaskCreation, showTaskEdit, hideTaskEdit } = uiSlice.actions;
 
 export const store = configureStore({
   reducer: {
     ui: uiSlice.reducer,
     taskCreation: taskCreationReducer,
+    notification: notificationReducer,
   },
 });
 

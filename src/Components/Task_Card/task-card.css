@@ -1,0 +1,32 @@
+.task-card {
+  transition: all 0.2s ease-in-out;
+}
+
+.task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.priority-badge, .status-badge, .category-badge, .tag-badge {
+  transition: all 0.2s ease;
+}
+
+.priority-badge:hover, .status-badge:hover, .category-badge:hover, .tag-badge:hover {
+  filter: brightness(1.1);
+}
+
+.task-details {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.task-tags {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.task-card:hover .task-tags {
+  max-height: 50px;
+}
