@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store";
-import { db } from "@/src/Firebase/firebase";
-import { doc, updateDoc, deleteDoc } from "firebase/firestore";
+import TaskService from "@/src/Firebase/taskService";
 import { showNotification } from "../../notificationSlice";
+import { updateTask as updateTaskInState, deleteTask as deleteTaskFromState } from "../../tasksSlice";
 import emailService from "../../services/emailNotificationService";
 import notificationScheduler from "../../services/notificationScheduler";
 
@@ -49,10 +49,24 @@ export default function Task_Card({
       const newStatus = !isCompleted;
       setIsCompleted(newStatus);
       
-      await updateDoc(doc(db, "tasks", id), { 
+      if (!user?.uid) {
+        throw new Error('User not authenticated');
+      }
+      
+      // Update task in database using TaskService
+      await TaskService.updateTask(user.uid, id, { 
         completed: newStatus,
         updatedAt: new Date()
       });
+      
+      // Update task in Redux state
+      dispatch(updateTaskInState({
+        id,
+        updates: {
+          completed: newStatus,
+          updatedAt: new Date().toISOString()
+        }
+      }));
       
       // If task is completed, send notification and cancel reminders
       if (newStatus) {
@@ -60,7 +74,7 @@ export default function Task_Card({
         await emailService.sendTaskCompletionNotification({
           taskName: title,
           completedAt: new Date(),
-          userEmail: user?.email || "user@example.com", // This should come from user auth
+          userEmail: user?.email || "user@example.com",
           category,
           priority
         });
@@ -108,11 +122,22 @@ export default function Task_Card({
     if (window.confirm("Are you sure you want to delete this task?")) {
       try {
         setIsDeleting(true);
-        await deleteDoc(doc(db, "tasks", id));
+        
+        if (!user?.uid) {
+          throw new Error('User not authenticated');
+        }
+        
+        // Delete task from database using TaskService
+        await TaskService.deleteTask(user.uid, id);
+        
+        // Remove task from Redux state
+        dispatch(deleteTaskFromState(id));
+        
         dispatch(showNotification({
           message: "Task deleted successfully!",
           type: 'success'
         }));
+        
         onTaskUpdate();
       } catch (error) {
         console.error("Error deleting task:", error);

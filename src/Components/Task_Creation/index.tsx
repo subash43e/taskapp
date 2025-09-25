@@ -2,6 +2,7 @@ import React from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, hideTaskCreation } from '../../store';
 import { showNotification } from '../../notificationSlice';
+import { addTask } from '../../tasksSlice';
 import { 
   setTaskName, 
   setDescription, 
@@ -25,8 +26,7 @@ import {
   selectTag,
   resetTaskForm
 } from '../../taskCreationSlice';
-import { db } from "@/src/Firebase/firebase";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import TaskService from "@/src/Firebase/taskService";
 import notificationScheduler from "../../services/notificationScheduler";
 
 const priorities = ["Low", "Medium", "High"];
@@ -103,6 +103,15 @@ export default function TaskCreation() {
         }
 
         try {
+            // Check if user is authenticated
+            if (!user?.uid) {
+                dispatch(showNotification({
+                    message: "You must be logged in to create tasks.",
+                    type: "error"
+                }));
+                return;
+            }
+
             // Save new category if it doesn't exist
             if (categoryInput && !categories.some(c => c.toLowerCase() === categoryInput.toLowerCase())) {
                 dispatch(addCategory(categoryInput));
@@ -111,29 +120,47 @@ export default function TaskCreation() {
             // Prepare cleaned tags (filter out any potential empty values)
             const cleanedTags = tags.filter(tag => tag.trim() !== "");
             
-            // Save the task to Firestore
-            const docRef = await addDoc(collection(db, "tasks"), {
+            // Save the task using the new TaskService
+            const taskId = await TaskService.createTask(user.uid, {
                 taskName: taskName.trim(),
                 description: description.trim(),
                 dueDate,
                 dueTime,
-                priority,
+                priority: priority as 'High' | 'Medium' | 'Low',
+                category: categoryInput.trim(),
+                tags: cleanedTags,
+                color,
+                completed: false
+            });
+            
+            // Create the task object for Redux state
+            const newTask = {
+                id: taskId,
+                taskName: taskName.trim(),
+                description: description.trim(),
+                dueDate,
+                dueTime,
+                priority: priority as 'High' | 'Medium' | 'Low',
                 category: categoryInput.trim(),
                 tags: cleanedTags,
                 color,
                 completed: false,
-                createdAt: serverTimestamp(),
-                updatedAt: serverTimestamp()
-            });
+                userId: user.uid,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+            
+            // Add the task to Redux state for real-time updates
+            dispatch(addTask(newTask));
             
             // Schedule reminders for the new task if it has date and time
             if (dueDate && dueTime) {
                 notificationScheduler.scheduleTaskReminder({
-                    id: docRef.id,
+                    id: taskId,
                     taskName: taskName.trim(),
                     dueDate,
                     dueTime,
-                    userEmail: user?.email || "user@example.com", // This should come from user auth
+                    userEmail: user?.email || "user@example.com",
                     category: categoryInput.trim(),
                     priority
                 });

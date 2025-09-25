@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { signOut } from 'firebase/auth';
 import { auth } from './Firebase/firebase';
+import { formatAuthError } from './utils/authErrors';
 
 interface User {
   uid: string;
@@ -37,6 +38,9 @@ const authSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
+    clearError: (state) => {
+      state.error = null;
+    },
     logout: (state) => {
       state.user = null;
       state.loading = false;
@@ -45,7 +49,7 @@ const authSlice = createSlice({
   },
 });
 
-export const { setUser, setLoading, setError, logout } = authSlice.actions;
+export const { setUser, setLoading, setError, clearError, logout } = authSlice.actions;
 
 // Thunk for logout
 export const logoutUser = () => async (dispatch: any) => {
@@ -53,7 +57,8 @@ export const logoutUser = () => async (dispatch: any) => {
     await signOut(auth);
     dispatch(logout());
   } catch (error: any) {
-    dispatch(setError(error.message));
+    const formattedError = formatAuthError(error);
+    dispatch(setError(formattedError));
   }
 };
 

@@ -1,52 +1,65 @@
 "use client"
 import Task_Card from "@/src/Components/Task_Card/Index";
-import { db } from "@/src/Firebase/firebase";
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import TaskService, { Task } from "@/src/Firebase/taskService";
+import { useEffect, useState, useMemo } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { showTaskEdit } from "@/src/store";
+import { RootState } from '@/src/store';
+import { setTasks, setTasksLoading, setTasksError } from '@/src/tasksSlice';
 import Loading from "../Inbox/Loading";
 import SearchBar from "@/src/Components/SearchBar";
 import ProtectedRoute from "@/src/Components/ProtectedRoute";
 
 export default function UpcomingPage() {
   const dispatch = useDispatch();
-  const [tasks, setTasks] = useState([]);
+  const allTasks = useSelector((state: RootState) => state.tasks.tasks);
+  const loading = useSelector((state: RootState) => state.tasks.loading);
   const [searchQuery, setSearchQuery] = useState("");
-  const [loading, setLoading] = useState(true);
+  const user = useSelector((state: RootState) => state.auth.user);
 
-  const fetchUpcomingTasks = async () => {
+  const fetchTasks = async () => {
     try {
-      setLoading(true);
-      const querySnapshot = await getDocs(collection(db, "tasks"));
-      const today = new Date();
-      today.setHours(23, 59, 59, 999); // End of today
+      dispatch(setTasksLoading(true));
       
-      const TaskList: any = querySnapshot.docs
-        .map(doc => ({ id: doc.id, ...doc.data() }))
-        .filter((task: any) => {
-          const taskDate = new Date(task.dueDate);
-          return taskDate > today && !task.completed;
-        })
-        .sort((a: any, b: any) => {
-          return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
-        });
+      if (!user?.uid) {
+        console.error("User not authenticated");
+        dispatch(setTasks([]));
+        return;
+      }
+
+      // Use the new TaskService to get user-specific tasks
+      const userTasks = await TaskService.getUserTasks(user.uid);
+      dispatch(setTasks(userTasks));
       
-      setTasks(TaskList);
     } catch (error) {
-      console.error("Error fetching upcoming tasks:", error);
+      console.error("Error fetching tasks:", error);
+      dispatch(setTasksError(error instanceof Error ? error.message : 'Failed to fetch tasks'));
     } finally {
-      setLoading(false);
+      dispatch(setTasksLoading(false));
     }
   };
 
   useEffect(() => {
-    fetchUpcomingTasks();
-  }, []);
+    if (user?.uid) {
+      fetchTasks();
+    }
+  }, [user]);
+
+  // Filter upcoming tasks from all tasks
+  const tasks = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Start of today
+    
+    return allTasks.filter(task => {
+      const taskDate = new Date(task.dueDate);
+      taskDate.setHours(0, 0, 0, 0);
+      return taskDate > today && !task.completed; // Only show incomplete upcoming tasks
+    });
+  }, [allTasks]);
 
   // Group tasks by date
-  const groupTasksByDate = (tasks: any[]) => {
-    const groups: { [key: string]: any[] } = {};
+  const groupTasksByDate = (tasks: Task[]) => {
+    const groups: { [key: string]: Task[] } = {};
     
     tasks.forEach(task => {
       const date = new Date(task.dueDate);
@@ -62,7 +75,7 @@ export default function UpcomingPage() {
   };
 
   // Filter tasks based on search query
-  const filteredTasks = tasks.filter((task: any) => {
+  const filteredTasks = tasks.filter((task: Task) => {
     const q = searchQuery.toLowerCase();
     return !q || (
       task.taskName?.toLowerCase().includes(q) ||
@@ -152,7 +165,7 @@ export default function UpcomingPage() {
                       category={task.category}
                       tags={task.tags || []}
                       completed={task.completed || false}
-                      onTaskUpdate={fetchUpcomingTasks}
+                      onTaskUpdate={fetchTasks}
                     />
                   ))}
                 </div>

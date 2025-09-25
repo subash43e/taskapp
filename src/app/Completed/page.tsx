@@ -1,41 +1,53 @@
 "use client"
 import Task_Card from "@/src/Components/Task_Card/Index";
-import { db } from "@/src/Firebase/firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Loading from "../Inbox/Loading";
 import SearchBar from "@/src/Components/SearchBar";
 import ProtectedRoute from "@/src/Components/ProtectedRoute";
+import TaskService, { Task } from "@/src/Firebase/taskService";
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '@/src/store';
+import { setTasks, setTasksLoading, setTasksError } from '@/src/tasksSlice';
 
 export default function CompletedPage() {
-  const [tasks, setTasks] = useState([]);
+  const dispatch = useDispatch();
+  const allTasks = useSelector((state: RootState) => state.tasks.tasks);
+  const loading = useSelector((state: RootState) => state.tasks.loading);
   const [searchQuery, setSearchQuery] = useState("");
-  const [loading, setLoading] = useState(true);
+  const user = useSelector((state: RootState) => state.auth.user);
 
-  const fetchCompletedTasks = async () => {
+  const fetchTasks = async () => {
     try {
-      setLoading(true);
-      const querySnapshot = await getDocs(collection(db, "tasks"));
+      dispatch(setTasksLoading(true));
       
-      const TaskList: any = querySnapshot.docs
-        .map(doc => ({ id: doc.id, ...doc.data() }))
-        .filter((task: any) => task.completed)
-        .sort((a: any, b: any) => {
-          return new Date(b.updatedAt?.toDate?.() || b.updatedAt).getTime() - 
-                 new Date(a.updatedAt?.toDate?.() || a.updatedAt).getTime();
-        });
+      if (!user?.uid) {
+        console.error("User not authenticated");
+        dispatch(setTasks([]));
+        return;
+      }
+
+      // Use the new TaskService to get user-specific tasks
+      const userTasks = await TaskService.getUserTasks(user.uid);
+      dispatch(setTasks(userTasks));
       
-      setTasks(TaskList);
     } catch (error) {
-      console.error("Error fetching completed tasks:", error);
+      console.error("Error fetching tasks:", error);
+      dispatch(setTasksError(error instanceof Error ? error.message : 'Failed to fetch tasks'));
     } finally {
-      setLoading(false);
+      dispatch(setTasksLoading(false));
     }
   };
 
   useEffect(() => {
-    fetchCompletedTasks();
-  }, []);
+    if (user?.uid) {
+      fetchTasks();
+    }
+  }, [user]);
+
+  // Filter completed tasks from all tasks
+  const tasks = useMemo(() => {
+    return allTasks.filter(task => task.completed);
+  }, [allTasks]);
 
   // Filter tasks based on search query
   const filteredTasks = tasks.filter((task: any) => {
@@ -94,7 +106,7 @@ export default function CompletedPage() {
                 category={task.category}
                 tags={task.tags || []}
                 completed={task.completed || false}
-                onTaskUpdate={fetchCompletedTasks}
+                onTaskUpdate={fetchTasks}
               />
             ))}
           </div>

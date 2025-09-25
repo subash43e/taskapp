@@ -1,43 +1,55 @@
 "use client"
 import Task_Card from "@/src/Components/Task_Card/Index";
-import { db } from "@/src/Firebase/firebase";
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import TaskService, { Task } from "@/src/Firebase/taskService";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { showTaskEdit } from "@/src/store";
+import { RootState } from '@/src/store';
+import { setTasks, setTasksLoading, setTasksError } from '@/src/tasksSlice';
 import Loading from "./Loading";
 import SearchBar from "@/src/Components/SearchBar";
 import ProtectedRoute from "@/src/Components/ProtectedRoute";
 
 export default function Home() {
   const dispatch = useDispatch();
-  const [tasks, setTasks] = useState([]);
+  const tasks = useSelector((state: RootState) => state.tasks.tasks);
+  const loading = useSelector((state: RootState) => state.tasks.loading);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("all"); // all, active, completed
   const [sortBy, setSortBy] = useState("dueDate"); // dueDate, priority, created
-  const [loading, setLoading] = useState(true);
+  const user = useSelector((state: RootState) => state.auth.user);
 
   const fetchTasks = async () => {
     try {
-      setLoading(true);
-      const q = query(collection(db, "tasks"), orderBy("createdAt", "desc"));
-      const querySnapshot = await getDocs(q);
-      const TaskList: any = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setTasks(TaskList);
+      dispatch(setTasksLoading(true));
+      
+      if (!user?.uid) {
+        console.error("User not authenticated");
+        dispatch(setTasks([]));
+        return;
+      }
+
+      // Use the new TaskService to get user-specific tasks
+      const userTasks = await TaskService.getUserTasks(user.uid);
+      dispatch(setTasks(userTasks));
+      
     } catch (error) {
       console.error("Error fetching tasks:", error);
+      dispatch(setTasksError(error instanceof Error ? error.message : 'Failed to fetch tasks'));
     } finally {
-      setLoading(false);
+      dispatch(setTasksLoading(false));
     }
   };
 
   useEffect(() => {
-    fetchTasks();
-  }, []);
+    if (user?.uid) {
+      fetchTasks();
+    }
+  }, [user]);
 
   // Filter and sort tasks
   const getFilteredAndSortedTasks = () => {
-    let filtered = tasks.filter((task: any) => {
+    let filtered = tasks.filter((task: Task) => {
       // Search filter
       const q = searchQuery.toLowerCase();
       const matchesSearch = !q || (
