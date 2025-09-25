@@ -32,7 +32,7 @@ class NotificationScheduler {
   }
 
   // Schedule a reminder for a task
-  scheduleTaskReminder(task: any) {
+  scheduleTaskReminder(task: any, userEmail?: string) {
     if (!task.dueDate || !task.dueTime) {
       console.log(`Cannot schedule reminder for task ${task.taskName}: missing date or time`);
       return;
@@ -98,7 +98,7 @@ class NotificationScheduler {
       taskName: task.taskName,
       dueDate: task.dueDate,
       dueTime: task.dueTime,
-      userEmail: this.userEmail,
+      userEmail: task.userEmail,
       category: task.category,
       priority: task.priority
     });

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../store";
 import { db } from "@/src/Firebase/firebase";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { showNotification } from "../../notificationSlice";
@@ -38,6 +39,7 @@ export default function Task_Card({
   onTaskEdit
 }: TaskCardProps) {
   const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.auth.user);
   const [isCompleted, setIsCompleted] = useState(completed);
   const [showMenu, setShowMenu] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -58,7 +60,7 @@ export default function Task_Card({
         await emailService.sendTaskCompletionNotification({
           taskName: title,
           completedAt: new Date(),
-          userEmail: "user@example.com", // This should come from user auth
+          userEmail: user?.email || "user@example.com", // This should come from user auth
           category,
           priority
         });
@@ -79,7 +81,7 @@ export default function Task_Card({
             taskName: title,
             dueDate,
             dueTime,
-            userEmail: "user@example.com",
+            userEmail: user?.email || "user@example.com",
             category,
             priority
           });

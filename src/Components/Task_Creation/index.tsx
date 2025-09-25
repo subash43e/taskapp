@@ -36,6 +36,7 @@ const priorities = ["Low", "Medium", "High"];
 
 export default function TaskCreation() {
     const dispatch = useDispatch();
+    const user = useSelector((state: RootState) => state.auth.user);
     const { 
         taskName, 
         description, 
@@ -132,7 +133,7 @@ export default function TaskCreation() {
                     taskName: taskName.trim(),
                     dueDate,
                     dueTime,
-                    userEmail: "user@example.com", // This should come from user auth
+                    userEmail: user?.email || "user@example.com", // This should come from user auth
                     category: categoryInput.trim(),
                     priority
                 });

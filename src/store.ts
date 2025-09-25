@@ -1,6 +1,7 @@
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import taskCreationReducer from './taskCreationSlice';
 import notificationReducer from './notificationSlice';
+import authReducer from './authSlice';
 
 // Example: UI state for sidebar size
 const uiSlice = createSlice({
@@ -54,6 +55,7 @@ export const store = configureStore({
     ui: uiSlice.reducer,
     taskCreation: taskCreationReducer,
     notification: notificationReducer,
+    auth: authReducer,
   },
 });
 
