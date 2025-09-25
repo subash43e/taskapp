@@ -5,6 +5,7 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import Loading from "../Inbox/Loading";
 import SearchBar from "@/src/Components/SearchBar";
+import ProtectedRoute from "@/src/Components/ProtectedRoute";
 
 export default function CompletedPage() {
   const [tasks, setTasks] = useState([]);
@@ -48,9 +49,10 @@ export default function CompletedPage() {
   });
 
   return (
-    <div className="p-4">
-      <section className="mb-6">
-        <h1 className="text-2xl font-bold text-white mb-2">Completed</h1>
+    <ProtectedRoute>
+      <div className="p-4">
+        <section className="mb-6">
+          <h1 className="text-2xl font-bold text-white mb-2">Completed</h1>
         <div className="text-sm text-gray-300">
           {filteredTasks.length} completed {filteredTasks.length === 1 ? 'task' : 'tasks'}
         </div>
@@ -99,5 +101,6 @@ export default function CompletedPage() {
         )}
       </section>
     </div>
+    </ProtectedRoute>
   );
 }

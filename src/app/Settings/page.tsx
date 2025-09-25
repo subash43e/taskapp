@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { showNotification } from "../../notificationSlice";
 import emailService, { EmailConfig } from "../../services/emailNotificationService";
 import notificationScheduler from "../../services/notificationScheduler";
+import ProtectedRoute from "../../Components/ProtectedRoute";
 
 export default function SettingsPage() {
   const dispatch = useDispatch();
@@ -113,8 +114,9 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold text-white mb-6">Settings</h1>
+    <ProtectedRoute>
+      <div className="p-6 max-w-4xl mx-auto">
+        <h1 className="text-2xl font-bold text-white mb-6">Settings</h1>
 
       {/* Email Settings */}
       <div className="bg-gray-800 rounded-lg p-6 mb-6">
@@ -282,5 +284,6 @@ export default function SettingsPage() {
         </p>
       </div>
     </div>
+    </ProtectedRoute>
   );
 }

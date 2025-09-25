@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { showTaskEdit } from "@/src/store";
 import Loading from "./Loading";
 import SearchBar from "@/src/Components/SearchBar";
+import ProtectedRoute from "@/src/Components/ProtectedRoute";
 
 export default function Home() {
   const dispatch = useDispatch();
@@ -78,10 +79,11 @@ export default function Home() {
   const activeCount = tasks.filter((task: any) => !task.completed).length;
 
   return (
-    <>
-      <div className="p-4">
-        <section className="mb-6">
-          <h1 className="text-2xl font-bold text-white mb-2">Inbox</h1>
+    <ProtectedRoute>
+      <>
+        <div className="p-4">
+          <section className="mb-6">
+            <h1 className="text-2xl font-bold text-white mb-2">Inbox</h1>
           <div className="flex gap-4 text-sm text-gray-300">
             <span>{activeCount} active</span>
             <span>{completedCount} completed</span>
@@ -162,6 +164,7 @@ export default function Home() {
         </section>
       </div>
     </>
+    </ProtectedRoute>
   );
 }
 

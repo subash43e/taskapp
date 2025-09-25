@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { showTaskEdit } from "@/src/store";
 import Loading from "../Inbox/Loading";
 import SearchBar from "@/src/Components/SearchBar";
+import ProtectedRoute from "@/src/Components/ProtectedRoute";
 
 export default function UpcomingPage() {
   const dispatch = useDispatch();
@@ -100,9 +101,10 @@ export default function UpcomingPage() {
   };
 
   return (
-    <div className="p-4">
-      <section className="mb-6">
-        <h1 className="text-2xl font-bold text-white mb-2">Upcoming</h1>
+    <ProtectedRoute>
+      <div className="p-4">
+        <section className="mb-6">
+          <h1 className="text-2xl font-bold text-white mb-2">Upcoming</h1>
         <div className="text-sm text-gray-300">
           {filteredTasks.length} upcoming {filteredTasks.length === 1 ? 'task' : 'tasks'}
         </div>
@@ -160,5 +162,6 @@ export default function UpcomingPage() {
         )}
       </section>
     </div>
+    </ProtectedRoute>
   );
 }
