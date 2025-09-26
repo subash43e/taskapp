@@ -1,6 +1,6 @@
 "use client"
 import Task_Card from "@/src/Components/Task_Card/Index";
-import TaskService, { Task } from "@/src/Firebase/taskService";
+import { getUserTasks, type Task } from "@/src/Firebase/taskService";
 import { useEffect, useState, useMemo } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { showTaskEdit } from "@/src/store";
@@ -28,7 +28,7 @@ export default function UpcomingPage() {
       }
 
       // Use the new TaskService to get user-specific tasks
-      const userTasks = await TaskService.getUserTasks(user.uid);
+      const userTasks = await getUserTasks(user.uid);
       dispatch(setTasks(userTasks));
       
     } catch (error) {

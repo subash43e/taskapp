@@ -26,7 +26,7 @@ import {
   selectTag,
   resetTaskForm
 } from '../../taskCreationSlice';
-import TaskService from "@/src/Firebase/taskService";
+import { createTask } from "@/src/Firebase/taskService";
 import notificationScheduler from "../../services/notificationScheduler";
 
 const priorities = ["Low", "Medium", "High"];
@@ -121,7 +121,7 @@ export default function TaskCreation() {
             const cleanedTags = tags.filter(tag => tag.trim() !== "");
             
             // Save the task using the new TaskService
-            const taskId = await TaskService.createTask(user.uid, {
+            const taskId = await createTask(user.uid, {
                 taskName: taskName.trim(),
                 description: description.trim(),
                 dueDate,

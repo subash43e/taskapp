@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store";
-import TaskService from "@/src/Firebase/taskService";
+import { updateTask, deleteTask } from "@/src/Firebase/taskService";
 import { showNotification } from "../../notificationSlice";
 import { updateTask as updateTaskInState, deleteTask as deleteTaskFromState } from "../../tasksSlice";
 import emailService from "../../services/emailNotificationService";
@@ -54,9 +54,8 @@ export default function Task_Card({
       }
       
       // Update task in database using TaskService
-      await TaskService.updateTask(user.uid, id, { 
-        completed: newStatus,
-        updatedAt: new Date()
+      await updateTask(user.uid, id, { 
+        completed: newStatus
       });
       
       // Update task in Redux state
@@ -128,7 +127,7 @@ export default function Task_Card({
         }
         
         // Delete task from database using TaskService
-        await TaskService.deleteTask(user.uid, id);
+        await deleteTask(user.uid, id);
         
         // Remove task from Redux state
         dispatch(deleteTaskFromState(id));

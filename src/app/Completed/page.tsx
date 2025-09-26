@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import Loading from "../Inbox/Loading";
 import SearchBar from "@/src/Components/SearchBar";
 import ProtectedRoute from "@/src/Components/ProtectedRoute";
-import TaskService, { Task } from "@/src/Firebase/taskService";
+import { getUserTasks, type Task } from "@/src/Firebase/taskService";
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/src/store';
 import { setTasks, setTasksLoading, setTasksError } from '@/src/tasksSlice';
@@ -27,7 +27,7 @@ export default function CompletedPage() {
       }
 
       // Use the new TaskService to get user-specific tasks
-      const userTasks = await TaskService.getUserTasks(user.uid);
+      const userTasks = await getUserTasks(user.uid);
       dispatch(setTasks(userTasks));
       
     } catch (error) {
