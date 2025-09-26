@@ -1,15 +1,15 @@
-import { 
-  collection, 
-  doc, 
-  getDocs, 
-  addDoc, 
-  updateDoc, 
-  deleteDoc, 
-  query, 
-  where, 
+import {
+  collection,
+  doc,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  query,
+  where,
   serverTimestamp
 } from 'firebase/firestore';
-import { db } from './firebase';
+import { auth, db } from './firebase';
 
 export interface Task {
   id?: string;
@@ -33,7 +33,7 @@ function getUserTasksCollection(userId: string) {
 }
 
 export async function createTask(
-  userId: string, 
+  userId: string,
   taskData: Omit<Task, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
 ): Promise<string> {
   if (!userId) throw new Error('User must be authenticated to create tasks');
@@ -141,16 +141,24 @@ export async function getUpcomingTasks(userId: string): Promise<Task[]> {
 }
 
 export async function updateTask(
-  userId: string, 
-  taskId: string, 
+  userId: string,
+  taskId: string,
   updates: Partial<Omit<Task, 'id' | 'userId' | 'createdAt'>>
 ): Promise<void> {
+  const currentUser = auth.currentUser;
+  console.log('Current user:', currentUser);
+  console.log('Provided userId:', userId);
+  console.log('User authenticated:', !!currentUser);
+  console.log('UIDs match:', currentUser?.uid === userId);
+  
+
   if (!userId) throw new Error('User must be authenticated to update tasks');
   const taskRef = doc(db, 'users', userId, 'tasks', taskId);
   const updateData = {
     ...updates,
     updatedAt: serverTimestamp(),
   };
+  console.log(updateData);
   await updateDoc(taskRef, updateData);
 }
 
@@ -172,7 +180,7 @@ export async function searchUserTasks(userId: string, searchQuery: string): Prom
   if (!userId) throw new Error('User must be authenticated to search tasks');
   const allTasks = await getUserTasks(userId);
   const lowercaseQuery = searchQuery.toLowerCase();
-  return allTasks.filter(task => 
+  return allTasks.filter(task =>
     task.taskName.toLowerCase().includes(lowercaseQuery) ||
     task.description.toLowerCase().includes(lowercaseQuery) ||
     task.category.toLowerCase().includes(lowercaseQuery) ||

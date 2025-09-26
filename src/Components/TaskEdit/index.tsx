@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store';
 import { showNotification } from '../../notificationSlice';
+import { updateTask as updateTaskInState } from '../../tasksSlice';
 import { 
   setTaskName, 
   setDescription, 
@@ -20,8 +21,7 @@ import {
   clearAllTags,
   resetTaskForm
 } from '../../taskCreationSlice';
-import { db } from "@/src/Firebase/firebase";
-import { doc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { updateTask } from "@/src/Firebase/taskService";
 
 const priorities = ["Low", "Medium", "High"];
 
@@ -33,6 +33,7 @@ interface TaskEditProps {
 
 export default function TaskEdit({ task, onClose, onTaskUpdate }: TaskEditProps) {
   const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.auth.user);
   const { 
     taskName, 
     description, 
@@ -93,6 +94,24 @@ export default function TaskEdit({ task, onClose, onTaskUpdate }: TaskEditProps)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Check if user is authenticated
+    if (!user?.uid) {
+      dispatch(showNotification({
+        message: "You must be logged in to update tasks.",
+        type: "error"
+      }));
+      return;
+    }
+
+    // Check if user owns this task
+    if (task.userId && task.userId !== user.uid) {
+      dispatch(showNotification({
+        message: "You can only edit your own tasks.",
+        type: "error"
+      }));
+      return;
+    }
+
     // Form validation
     const requiredFields = [
       { key: "taskName", value: taskName, label: "Task Name" },
@@ -116,18 +135,28 @@ export default function TaskEdit({ task, onClose, onTaskUpdate }: TaskEditProps)
     try {
       const cleanedTags = tags.filter(tag => tag.trim() !== "");
       
-      // Update the task in Firestore
-      await updateDoc(doc(db, "tasks", task.id), {
+      const updateData = {
         taskName: taskName.trim(),
         description: description.trim(),
         dueDate,
         dueTime,
-        priority,
+        priority: priority as 'High' | 'Medium' | 'Low',
         category: categoryInput.trim(),
         tags: cleanedTags,
-        color,
-        updatedAt: serverTimestamp()
-      });
+        color
+      };
+      
+      // Update the task using TaskService (secure, user-specific)
+      await updateTask(user.uid, task.id, updateData);
+      
+      // Update Redux state with the new data
+      dispatch(updateTaskInState({
+        id: task.id,
+        updates: {
+          ...updateData,
+          updatedAt: new Date().toISOString()
+        }
+      }));
       
       // Close modal and refresh
       onClose();
