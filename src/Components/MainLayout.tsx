@@ -2,11 +2,10 @@
 
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, setSidebarSize, setIsResizing, setStartX, setStartWidth, hideTaskEdit } from '../store';
+import { RootState, setSidebarSize, setIsResizing, setStartX, setStartWidth, hideTaskEdit, hideTaskCreation } from '../store';
 import Navbar from "./NavBar";
 import { Sidebar } from "./Sidebar";
-import TaskCreation from "./Task_Creation";
-import TaskEdit from "./TaskEdit";
+import TaskForm from "./TaskForm";
 import NotificationToast from "./NotificationToast";
 import notificationScheduler from "../services/notificationScheduler";
 import emailService, { EmailConfig } from "../services/emailNotificationService";
@@ -105,16 +104,23 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       {/* Task Creation Modal */}
       {showTaskCreation && (
         <div className="fixed inset-0 bg-black/80 bg-opacity-50 flex items-center justify-center z-50">
-          <TaskCreation />
+          <TaskForm 
+            mode="create" 
+            onClose={() => dispatch(hideTaskCreation())} 
+          />
         </div>
       )}
       {/* Task Edit Modal */}
       {showTaskEdit && editingTask && (
         <div className="fixed inset-0 bg-black/80 bg-opacity-50 flex items-center justify-center z-50">
-          <TaskEdit 
+          <TaskForm 
+            mode="edit"
             task={editingTask} 
             onClose={() => dispatch(hideTaskEdit())}
-            onTaskUpdate={() => window.location.reload()} // Simple refresh for now
+            onTaskUpdate={() => {
+              // Refresh tasks if needed
+              console.log('Task updated');
+            }}
           />
         </div>
       )}

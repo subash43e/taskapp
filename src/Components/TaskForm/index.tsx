@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../store';
+import { RootState, hideTaskCreation } from '../../store';
 import { showNotification } from '../../notificationSlice';
-import { updateTask as updateTaskInState } from '../../tasksSlice';
+import { addTask, updateTask as updateTaskInState } from '../../tasksSlice';
 import { 
   setTaskName, 
   setDescription, 
@@ -10,28 +10,30 @@ import {
   setDueTime,
   setPriority, 
   setColor, 
-  setTags,
+  removeTag, 
+  clearAllTags, 
   setTagInput,
   setCategoryInput,
   setShowCategorySuggestions,
   setShowTagSuggestions,
+  addCategory,
   selectCategory,
   selectTag,
-  removeTag,
-  clearAllTags,
   resetTaskForm
 } from '../../taskCreationSlice';
-import { updateTask } from "@/src/Firebase/taskService";
+import { createTask, updateTask } from "@/src/Firebase/taskService";
+import notificationScheduler from "../../services/notificationScheduler";
 
 const priorities = ["Low", "Medium", "High"];
 
-interface TaskEditProps {
-  task: any;
+interface TaskFormProps {
+  mode: 'create' | 'edit';
+  task?: any; // For edit mode
   onClose: () => void;
-  onTaskUpdate: () => void;
+  onTaskUpdate?: () => void; // Optional callback for additional updates
 }
 
-export default function TaskEdit({ task, onClose, onTaskUpdate }: TaskEditProps) {
+export default function TaskForm({ mode, task, onClose, onTaskUpdate }: TaskFormProps) {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
   const { 
@@ -50,9 +52,9 @@ export default function TaskEdit({ task, onClose, onTaskUpdate }: TaskEditProps)
     availableTags
   } = useSelector((state: RootState) => state.taskCreation);
 
-  // Populate form with existing task data
+  // Populate form with existing task data for edit mode
   useEffect(() => {
-    if (task) {
+    if (mode === 'edit' && task) {
       dispatch(setTaskName(task.taskName || ''));
       dispatch(setDescription(task.description || ''));
       dispatch(setDueDate(task.dueDate || ''));
@@ -60,9 +62,16 @@ export default function TaskEdit({ task, onClose, onTaskUpdate }: TaskEditProps)
       dispatch(setPriority(task.priority || ''));
       dispatch(setCategoryInput(task.category || ''));
       dispatch(setColor(task.color || '#2196f3'));
-      dispatch(setTags(task.tags || []));
+      dispatch(setTagInput(''));
+      // Set tags - ensure it's an array
+      const taskTags = Array.isArray(task.tags) ? task.tags : [];
+      dispatch(clearAllTags());
+      taskTags.forEach((tag: string) => dispatch(selectTag(tag)));
+    } else if (mode === 'create') {
+      // Reset form for create mode
+      dispatch(resetTaskForm());
     }
-  }, [task, dispatch]);
+  }, [mode, task, dispatch]);
 
   // Filter categories and tags for autocomplete
   const filteredCategories = categoryInput
@@ -97,14 +106,14 @@ export default function TaskEdit({ task, onClose, onTaskUpdate }: TaskEditProps)
     // Check if user is authenticated
     if (!user?.uid) {
       dispatch(showNotification({
-        message: "You must be logged in to update tasks.",
+        message: "You must be logged in to manage tasks.",
         type: "error"
       }));
       return;
     }
 
-    // Check if user owns this task
-    if (task.userId && task.userId !== user.uid) {
+    // For edit mode, check if user owns this task
+    if (mode === 'edit' && task?.userId && task.userId !== user.uid) {
       dispatch(showNotification({
         message: "You can only edit your own tasks.",
         type: "error"
@@ -135,7 +144,7 @@ export default function TaskEdit({ task, onClose, onTaskUpdate }: TaskEditProps)
     try {
       const cleanedTags = tags.filter(tag => tag.trim() !== "");
       
-      const updateData = {
+      const taskData = {
         taskName: taskName.trim(),
         description: description.trim(),
         dueDate,
@@ -145,31 +154,80 @@ export default function TaskEdit({ task, onClose, onTaskUpdate }: TaskEditProps)
         tags: cleanedTags,
         color
       };
-      
-      // Update the task using TaskService (secure, user-specific)
-      await updateTask(user.uid, task.id, updateData);
-      
-      // Update Redux state with the new data
-      dispatch(updateTaskInState({
-        id: task.id,
-        updates: {
-          ...updateData,
-          updatedAt: new Date().toISOString()
+
+      if (mode === 'create') {
+        // Save new category if it doesn't exist
+        if (categoryInput && !categories.some(c => c.toLowerCase() === categoryInput.toLowerCase())) {
+          dispatch(addCategory(categoryInput));
         }
-      }));
+        
+        // Create new task
+        const taskId = await createTask(user.uid, {
+          ...taskData,
+          completed: false
+        });
+        
+        // Create the task object for Redux state
+        const newTask = {
+          id: taskId,
+          ...taskData,
+          completed: false,
+          userId: user.uid,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+        
+        // Add the task to Redux state for real-time updates
+        dispatch(addTask(newTask));
+        
+        // Schedule reminders for the new task if it has date and time
+        if (dueDate && dueTime) {
+          notificationScheduler.scheduleTaskReminder({
+            id: taskId,
+            taskName: taskName.trim(),
+            dueDate,
+            dueTime,
+            userEmail: user?.email || "user@example.com",
+            category: categoryInput.trim(),
+            priority
+          });
+          
+          console.log(`Scheduled reminders for task: ${taskName}`);
+        }
+        
+        dispatch(hideTaskCreation());
+        dispatch(showNotification({
+          message: `Task "${taskName}" created successfully! ${dueTime ? 'Reminders have been set.' : ''}`,
+          type: 'success'
+        }));
+      } else {
+        // Update existing task
+        await updateTask(user.uid, task.id, taskData);
+        
+        // Update Redux state with the new data
+        dispatch(updateTaskInState({
+          id: task.id,
+          updates: {
+            ...taskData,
+            updatedAt: new Date().toISOString()
+          }
+        }));
+        
+        dispatch(showNotification({
+          message: `Task "${taskName}" updated successfully!`,
+          type: 'success'
+        }));
+      }
       
-      // Close modal and refresh
-      onClose();
-      onTaskUpdate();
+      // Clean up and close
       dispatch(resetTaskForm());
-      dispatch(showNotification({
-        message: `Task "${taskName}" updated successfully!`,
-        type: 'success'
-      }));
+      onClose();
+      onTaskUpdate?.(); // Call optional callback
+      
     } catch (error) {
-      console.error("Error updating task:", error);
+      console.error(`Error ${mode === 'create' ? 'creating' : 'updating'} task:`, error);
       dispatch(showNotification({
-        message: "Failed to update task. Please try again.",
+        message: `Failed to ${mode} task. Please try again.`,
         type: 'error'
       }));
     }
@@ -177,6 +235,9 @@ export default function TaskEdit({ task, onClose, onTaskUpdate }: TaskEditProps)
 
   const handleClose = () => {
     dispatch(resetTaskForm());
+    if (mode === 'create') {
+      dispatch(hideTaskCreation());
+    }
     onClose();
   };
 
@@ -184,7 +245,9 @@ export default function TaskEdit({ task, onClose, onTaskUpdate }: TaskEditProps)
     <div className="w-full h-full flex justify-center items-start p-6 overflow-y-auto">
       <div className="bg-gray-800 rounded-2xl shadow-lg p-8 w-[820px] max-w-[95vw]">
         <div className="flex justify-between items-center mb-3">
-          <h2 className="text-white font-bold text-2xl mb-6">Edit Task</h2>
+          <h2 className="text-white font-bold text-2xl mb-6">
+            {mode === 'create' ? 'Create New Task' : 'Edit Task'}
+          </h2>
           <button
             onClick={handleClose}
             className="mb-6 hover:bg-red-400 rounded-xl bg-red-600 text-white p-1"
@@ -282,6 +345,11 @@ export default function TaskEdit({ task, onClose, onTaskUpdate }: TaskEditProps)
                   ))}
                 </ul>
               )}
+              {showSuggestions && categoryInput && !filteredCategories.some(c => c.toLowerCase() === categoryInput.toLowerCase()) && mode === 'create' && (
+                <div className="absolute z-10 bg-gray-700 border border-gray-600 rounded-lg mt-1 w-full">
+                  <div className="px-4 py-2 text-green-400">Add "{categoryInput}" as new category</div>
+                </div>
+              )}
             </div>
             
             <div className="flex flex-col items-center">
@@ -325,6 +393,7 @@ export default function TaskEdit({ task, onClose, onTaskUpdate }: TaskEditProps)
                 autoComplete="off"
               />
               
+              {/* Tag suggestions dropdown */}
               {showTagSuggestions && filteredTags.length > 0 && (
                 <ul className="absolute z-10 bg-gray-700 border border-gray-600 rounded-lg mt-1 w-full max-h-40 overflow-y-auto">
                   {filteredTags.map(t => (
@@ -339,6 +408,19 @@ export default function TaskEdit({ task, onClose, onTaskUpdate }: TaskEditProps)
                 </ul>
               )}
               
+              {/* New tag suggestion */}
+              {showTagSuggestions && tagInput && !availableTags.some(t => t.toLowerCase() === tagInput.toLowerCase()) && tagInput.trim() !== "" && (
+                <div className="absolute z-10 bg-gray-700 border border-gray-600 rounded-lg mt-1 w-full">
+                  <div 
+                    className="px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-600"
+                    onMouseDown={() => handleTagSelect(tagInput.trim())}
+                  >
+                    Add "{tagInput}" as new tag
+                  </div>
+                </div>
+              )}
+              
+              {/* Display selected tags */}
               <div className="flex flex-wrap gap-2 mt-3 min-h-[28px]">
                 {tags.map((tag, idx) => (
                   <span key={idx} className="bg-blue-700 text-white px-2 py-1 rounded-lg text-xs flex items-center gap-1">
@@ -363,14 +445,16 @@ export default function TaskEdit({ task, onClose, onTaskUpdate }: TaskEditProps)
               className="bg-red-600 hover:bg-red-400 text-white font-semibold text-base border-none rounded-lg px-4 py-2.5 cursor-pointer transition-colors"
               onClick={handleClose}
             >
-              Cancel
+              {mode === 'create' ? 'Close' : 'Cancel'}
             </button>
             <button
               type="submit"
-              className="bg-green-600 hover:bg-green-700 text-white font-semibold text-base border-none rounded-lg px-4 py-2.5 cursor-pointer flex items-center gap-2 transition-colors"
+              className={`${
+                mode === 'create' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-green-600 hover:bg-green-700'
+              } text-white font-semibold text-base border-none rounded-lg px-4 py-2.5 cursor-pointer flex items-center gap-2 transition-colors`}
             >
-              <span>✓</span>
-              Update Task
+              <span>{mode === 'create' ? '+' : '✓'}</span>
+              {mode === 'create' ? 'Create Task' : 'Update Task'}
             </button>
           </div>
         </form>
