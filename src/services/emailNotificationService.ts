@@ -6,7 +6,7 @@ interface TaskCompletionEmailData {
   completedAt: Date;
   userEmail: string;
   category?: string;
-  priority?: string;
+  priority?: 'High' | 'Medium' | 'Low';
 }
 
 interface TaskReminderEmailData {
@@ -15,7 +15,7 @@ interface TaskReminderEmailData {
   dueTime?: string;
   userEmail: string;
   category?: string;
-  priority?: string;
+  priority?: 'High' | 'Medium' | 'Low';
 }
 
 interface EmailConfig {

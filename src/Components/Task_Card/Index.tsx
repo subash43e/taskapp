@@ -16,7 +16,7 @@ interface TaskCardProps {
   description?: string;
   dueDate: string;
   dueTime?: string;
-  priority: string;
+  priority: 'High' | 'Medium' | 'Low';
   category: string;
   tags: string[];
   completed?: boolean;
@@ -90,7 +90,7 @@ export default function Task_Card({
         // Task was uncompleted, reschedule reminders if needed
         if (dueDate && dueTime) {
           notificationScheduler.scheduleTaskReminder({
-            id,
+            taskId: id,
             taskName: title,
             dueDate,
             dueTime,

@@ -7,8 +7,8 @@ interface TaskReminder {
   dueTime?: string;
   userEmail: string;
   category?: string;
-  priority?: string;
-  reminderTime: Date;
+  priority?: 'High' | 'Medium' | 'Low';
+  reminderTime?: Date;
 }
 
 class NotificationScheduler {
@@ -32,13 +32,13 @@ class NotificationScheduler {
   }
 
   // Schedule a reminder for a task
-  scheduleTaskReminder(task: import("@/src/Firebase/taskService").Task, userEmail?: string) {
-    if (!task.dueDate || !task.dueTime) {
-      console.log(`Cannot schedule reminder for task ${task.taskName}: missing date or time`);
+  scheduleTaskReminder(taskData: TaskReminder) {
+    if (!taskData.dueDate || !taskData.dueTime) {
+      console.log(`Cannot schedule reminder for task ${taskData.taskName}: missing date or time`);
       return;
     }
 
-    const dueDateTime = new Date(`${task.dueDate}T${task.dueTime}`);
+    const dueDateTime = new Date(`${taskData.dueDate}T${taskData.dueTime}`);
     const now = new Date();
     
     // Schedule reminders at different intervals
@@ -54,14 +54,14 @@ class NotificationScheduler {
       
       if (reminderTime > now) {
         const timeoutId = setTimeout(() => {
-          this.sendTaskReminder(task, label);
+          this.sendTaskReminder(taskData, label);
         }, reminderTime.getTime() - now.getTime());
 
         // Store the timeout ID for potential cancellation
-        const key = `${task.id}-${minutes}`;
+        const key = `${taskData.taskId}-${minutes}`;
         this.scheduledNotifications.set(key, timeoutId);
         
-        console.log(`Scheduled reminder for "${task.taskName}" ${label} at ${reminderTime.toLocaleString()}`);
+        console.log(`Scheduled reminder for "${taskData.taskName}" ${label} at ${reminderTime.toLocaleString()}`);
       }
     });
   }
@@ -82,28 +82,28 @@ class NotificationScheduler {
   }
 
   // Send a task reminder notification
-  private async sendTaskReminder(task: import("@/src/Firebase/taskService").Task, reminderLabel: string) {
+  private async sendTaskReminder(taskData: TaskReminder, reminderLabel: string) {
     // Browser notification
     if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification(`Task Reminder: ${task.taskName}`, {
-        body: `${reminderLabel} - Due: ${task.dueDate} at ${task.dueTime}`,
+      new Notification(`Task Reminder: ${taskData.taskName}`, {
+        body: `${reminderLabel} - Due: ${taskData.dueDate} at ${taskData.dueTime}`,
         icon: '/task-icon.png',
-        tag: `task-${task.id}`,
+        tag: `task-${taskData.taskId}`,
         requireInteraction: true
       });
     }
 
     // Email notification
     await emailService.sendTaskReminderNotification({
-      taskName: task.taskName,
-      dueDate: task.dueDate,
-      dueTime: task.dueTime,
-      userEmail: this.userEmail,
-      category: task.category,
-      priority: task.priority
+      taskName: taskData.taskName,
+      dueDate: taskData.dueDate,
+      dueTime: taskData.dueTime,
+      userEmail: taskData.userEmail,
+      category: taskData.category,
+      priority: taskData.priority
     });
 
-    console.log(`Sent ${reminderLabel} reminder for: ${task.taskName}`);
+    console.log(`Sent ${reminderLabel} reminder for: ${taskData.taskName}`);
   }
 
   // Request notification permission from browser
