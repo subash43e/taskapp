@@ -166,7 +166,7 @@ Sent from your Task Management App
     return await this.sendEmail(data.userEmail, subject, message);
   }
 
-  async sendDailyTaskDigest(userEmail: string, tasks: any[]): Promise<boolean> {
+  async sendDailyTaskDigest(userEmail: string, tasks: import("@/src/Firebase/taskService").Task[]): Promise<boolean> {
     if (tasks.length === 0) {
       return true; // No need to send empty digest
     }
@@ -188,7 +188,7 @@ Sent from your Task Management App
     return await this.sendEmail(userEmail, subject, message);
   }
 
-  async sendOverdueTaskNotifications(userEmail: string, overdueTasks: any[]): Promise<boolean> {
+  async sendOverdueTaskNotifications(userEmail: string, overdueTasks: import("@/src/Firebase/taskService").Task[]): Promise<boolean> {
     if (overdueTasks.length === 0) {
       return true;
     }

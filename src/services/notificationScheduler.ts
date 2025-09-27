@@ -32,7 +32,7 @@ class NotificationScheduler {
   }
 
   // Schedule a reminder for a task
-  scheduleTaskReminder(task: any, userEmail?: string) {
+  scheduleTaskReminder(task: import("@/src/Firebase/taskService").Task, userEmail?: string) {
     if (!task.dueDate || !task.dueTime) {
       console.log(`Cannot schedule reminder for task ${task.taskName}: missing date or time`);
       return;
@@ -82,7 +82,7 @@ class NotificationScheduler {
   }
 
   // Send a task reminder notification
-  private async sendTaskReminder(task: any, reminderLabel: string) {
+  private async sendTaskReminder(task: import("@/src/Firebase/taskService").Task, reminderLabel: string) {
     // Browser notification
     if ('Notification' in window && Notification.permission === 'granted') {
       new Notification(`Task Reminder: ${task.taskName}`, {
@@ -98,7 +98,7 @@ class NotificationScheduler {
       taskName: task.taskName,
       dueDate: task.dueDate,
       dueTime: task.dueTime,
-      userEmail: task.userEmail,
+      userEmail: this.userEmail,
       category: task.category,
       priority: task.priority
     });
@@ -138,7 +138,7 @@ class NotificationScheduler {
       const tasks = JSON.parse(localStorage.getItem('allTasks') || '[]');
       const now = new Date();
       
-      const overdueTasks = tasks.filter((task: any) => {
+  const overdueTasks = tasks.filter((task: import("@/src/Firebase/taskService").Task) => {
         if (task.completed) return false;
         
         const dueDateTime = new Date(`${task.dueDate}T${task.dueTime || '23:59'}`);
@@ -209,11 +209,11 @@ class NotificationScheduler {
       const tomorrow = new Date(today);
       tomorrow.setDate(tomorrow.getDate() + 1);
       
-      const todayTasks = tasks.filter((task: any) => 
+  const todayTasks = tasks.filter((task: import("@/src/Firebase/taskService").Task) => 
         !task.completed && task.dueDate === today.toISOString().split('T')[0]
       );
       
-      const upcomingTasks = tasks.filter((task: any) => {
+  const upcomingTasks = tasks.filter((task: import("@/src/Firebase/taskService").Task) => {
         const taskDate = new Date(task.dueDate);
         return !task.completed && taskDate > today && taskDate <= new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
       });

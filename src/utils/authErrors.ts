@@ -50,21 +50,21 @@ export const AUTH_ERROR_MESSAGES: { [key: string]: string } = {
  * @param error - Firebase authentication error
  * @returns User-friendly error message
  */
-export const formatAuthError = (error: any): string => {
+export const formatAuthError = (error: unknown): string => {
   if (!error) return 'An unknown error occurred. Please try again.';
-  
+  const err = error as { code?: string; message?: string };
   // Check if it's a Firebase error with a code
-  if (error.code && typeof error.code === 'string') {
-    const userFriendlyMessage = AUTH_ERROR_MESSAGES[error.code];
+  if (err.code && typeof err.code === 'string') {
+    const userFriendlyMessage = AUTH_ERROR_MESSAGES[err.code];
     if (userFriendlyMessage) {
       return userFriendlyMessage;
     }
   }
   
   // Check if it's a custom error message
-  if (error.message && typeof error.message === 'string') {
+  if (err.message && typeof err.message === 'string') {
     // Handle some common error patterns that might not have codes
-    const message = error.message.toLowerCase();
+    const message = err.message.toLowerCase();
     
     if (message.includes('network') || message.includes('fetch')) {
       return 'Network error. Please check your internet connection and try again.';
@@ -80,7 +80,7 @@ export const formatAuthError = (error: any): string => {
     
     // Return the original message if it's already user-friendly (doesn't contain technical terms)
     if (!message.includes('firebase') && !message.includes('auth/') && message.length < 200) {
-      return error.message;
+      return err.message;
     }
   }
   

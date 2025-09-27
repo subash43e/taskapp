@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store";
-import { updateTask, deleteTask } from "@/src/Firebase/taskService";
+import { updateTask, deleteTask, Task } from "@/src/Firebase/taskService";
 import { showNotification } from "../../notificationSlice";
 import { updateTask as updateTaskInState, deleteTask as deleteTaskFromState } from "../../tasksSlice";
 import emailService from "../../services/emailNotificationService";
@@ -21,7 +21,7 @@ interface TaskCardProps {
   tags: string[];
   completed?: boolean;
   onTaskUpdate: () => void;
-  onTaskEdit?: (task: any) => void;
+  onTaskEdit?: (task: Task) => void;
 }
 
 export default function Task_Card({ 
@@ -265,7 +265,7 @@ export default function Task_Card({
                     tags,
                     color,
                     completed
-                  });
+                  } as Task);
                 }}
                 className="block w-full text-left px-4 py-2 text-blue-400 hover:bg-gray-600 text-sm"
               >

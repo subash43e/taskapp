@@ -14,7 +14,7 @@ const uiSlice = createSlice({
     startWidth: 180,
     showTaskCreation: false,
     showTaskEdit: false,
-    editingTask: null as any,
+    editingTask: null as import("@/src/Firebase/taskService").Task | null,
   },
   reducers: {
     setSidebarSize(state, action) {

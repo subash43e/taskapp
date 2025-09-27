@@ -28,7 +28,7 @@ const priorities = ["Low", "Medium", "High"];
 
 interface TaskFormProps {
   mode: 'create' | 'edit';
-  task?: any; // For edit mode
+  task?: import("@/src/Firebase/taskService").Task; // For edit mode
   onClose: () => void;
   onTaskUpdate?: () => void; // Optional callback for additional updates
 }
@@ -201,22 +201,27 @@ export default function TaskForm({ mode, task, onClose, onTaskUpdate }: TaskForm
           type: 'success'
         }));
       } else {
-        // Update existing task
-        await updateTask(user.uid, task.id, taskData);
-        
-        // Update Redux state with the new data
-        dispatch(updateTaskInState({
-          id: task.id,
-          updates: {
-            ...taskData,
-            updatedAt: new Date().toISOString()
-          }
-        }));
-        
-        dispatch(showNotification({
-          message: `Task "${taskName}" updated successfully!`,
-          type: 'success'
-        }));
+        // Update existing task only if task and task.id are defined
+        if (task && task.id) {
+          await updateTask(user.uid, task.id, taskData);
+          // Update Redux state with the new data
+          dispatch(updateTaskInState({
+            id: task.id,
+            updates: {
+              ...taskData,
+              updatedAt: new Date().toISOString()
+            }
+          }));
+          dispatch(showNotification({
+            message: `Task "${taskName}" updated successfully!`,
+            type: 'success'
+          }));
+        } else {
+          dispatch(showNotification({
+            message: "Task ID is missing. Cannot update task.",
+            type: 'error'
+          }));
+        }
       }
       
       // Clean up and close

@@ -67,7 +67,7 @@ export default function Home() {
     });
 
     // Sort tasks
-    filtered.sort((a: any, b: any) => {
+  filtered.sort((a: Task, b: Task) => {
       switch (sortBy) {
         case "dueDate":
           return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
@@ -77,8 +77,8 @@ export default function Home() {
                  (priorityOrder[a.priority as keyof typeof priorityOrder] || 0);
         case "created":
         default:
-          return new Date(b.createdAt?.toDate?.() || b.createdAt).getTime() - 
-                 new Date(a.createdAt?.toDate?.() || a.createdAt).getTime();
+     return new Date(b.createdAt || '').getTime() - 
+       new Date(a.createdAt || '').getTime();
       }
     });
 
@@ -86,8 +86,8 @@ export default function Home() {
   };
 
   const filteredTasks = getFilteredAndSortedTasks();
-  const completedCount = tasks.filter((task: any) => task.completed).length;
-  const activeCount = tasks.filter((task: any) => !task.completed).length;
+  const completedCount = tasks.filter((task: Task) => task.completed).length;
+  const activeCount = tasks.filter((task: Task) => !task.completed).length;
 
   return (
     <ProtectedRoute>
@@ -145,7 +145,7 @@ export default function Home() {
           ) : tasks.length === 0 ? (
             <div className="text-center py-12">
               <div className="text-gray-400 text-lg mb-4">No tasks yet</div>
-              <div className="text-gray-500 text-sm">Click the "New Task" button to create your first task</div>
+              <div className="text-gray-500 text-sm">Click the &quot;New Task&quot; button to create your first task</div>
             </div>
           ) : filteredTasks.length === 0 ? (
             <div className="text-gray-400 text-center py-8">
@@ -153,10 +153,10 @@ export default function Home() {
             </div>
           ) : (
             <div className="space-y-2">
-              {filteredTasks.map((task: any) => (
+              {filteredTasks.map((task: Task) => (
                 <Task_Card
                   key={task.id}
-                  id={task.id}
+                  id={task.id || ''}
                   color={task.color}
                   title={task.taskName}
                   description={task.description}

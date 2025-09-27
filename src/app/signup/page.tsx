@@ -18,7 +18,7 @@ export default function Signup() {
   const [fieldErrors, setFieldErrors] = useState<string[]>([]);
   const dispatch = useDispatch();
   const router = useRouter();
-  const { user, loading, error } = useSelector((state: any) => state.auth);
+  const { user, loading, error } = useSelector((state: import("@/src/store").RootState) => state.auth);
 
   useEffect(() => {
     // If user is already logged in, redirect immediately
@@ -93,7 +93,7 @@ export default function Signup() {
       
       // Redirect to login page
       router.push('/login');
-    } catch (error: any) {
+    } catch (error: unknown) {
       const formattedError = formatAuthError(error);
       dispatch(setError(formattedError));
     }

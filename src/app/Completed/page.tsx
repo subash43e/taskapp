@@ -50,7 +50,7 @@ export default function CompletedPage() {
   }, [allTasks]);
 
   // Filter tasks based on search query
-  const filteredTasks = tasks.filter((task: any) => {
+  const filteredTasks = tasks.filter((task: Task) => {
     const q = searchQuery.toLowerCase();
     return !q || (
       task.taskName?.toLowerCase().includes(q) ||
@@ -94,10 +94,10 @@ export default function CompletedPage() {
           </div>
         ) : (
           <div className="space-y-2">
-            {filteredTasks.map((task: any) => (
+            {filteredTasks.map((task: Task) => (
               <Task_Card
                 key={task.id}
-                id={task.id}
+                id={task.id || ''}
                 color={task.color}
                 title={task.taskName}
                 description={task.description}

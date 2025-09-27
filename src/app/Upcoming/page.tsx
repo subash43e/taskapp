@@ -153,10 +153,10 @@ export default function UpcomingPage() {
                   {formatDateHeader(dateString)} ({tasksForDate.length})
                 </h2>
                 <div className="space-y-2 ml-4">
-                  {tasksForDate.map((task: any) => (
+                  {tasksForDate.map((task: Task) => (
                     <Task_Card
                       key={task.id}
-                      id={task.id}
+                      id={task.id || ''}
                       color={task.color}
                       title={task.taskName}
                       description={task.description}
