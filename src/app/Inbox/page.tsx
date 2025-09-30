@@ -48,7 +48,7 @@ export default function Home() {
 
   // Filter and sort tasks
   const getFilteredAndSortedTasks = () => {
-    let filtered = tasks.filter((task: Task) => {
+    const filtered = tasks.filter((task: Task) => {
       // Search filter
       const q = searchQuery.toLowerCase();
       const matchesSearch = !q || (
