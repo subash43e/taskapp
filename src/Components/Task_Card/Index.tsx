@@ -11,6 +11,9 @@ import {
 } from "../../tasksSlice";
 import emailService from "../../services/emailNotificationService";
 import notificationScheduler from "../../services/notificationScheduler";
+import { TaskHeader } from "./components/TaskHeader";
+import { TaskMenu } from "./components/TaskMenu";
+import { TaskDetails } from "./components/TaskDetails";
 
 interface TaskCardProps {
   id: string;
@@ -24,7 +27,7 @@ interface TaskCardProps {
   tags: string[];
   completed?: boolean;
   onTaskUpdate: () => void;
-  onTaskEdit?: (task: Task) => void;
+  onTaskEdit?: (task: Partial<Task>) => void;
 }
 
 export default function Task_Card({
@@ -160,20 +163,6 @@ export default function Task_Card({
     }
   };
 
-  // Function to get the priority color based on the task
-  const getPriorityColor = (priority: string) => {
-    switch (priority.toLowerCase()) {
-      case "high":
-        return "text-red-400";
-      case "medium":
-        return "text-yellow-400";
-      case "low":
-        return "text-green-400";
-      default:
-        return "text-gray-400";
-    }
-  };
-
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const today = new Date();
@@ -209,170 +198,54 @@ export default function Task_Card({
 
   // Task Card Component
 
+  const taskData: Partial<Task> = {
+    id,
+    taskName: title,
+    description,
+    dueDate,
+    dueTime,
+    priority,
+    category,
+    tags,
+    color,
+    completed,
+  };
+
   return (
     <div
       className={`bg-[#1f2937] rounded-md mb-3 transition-all duration-200 relative group ${
         isCompleted ? "opacity-60" : ""
       }`}
     >
-      {/* Task Header (Always Visible and Clickable for Collapse) */}
-      <div
-        className="flex flex-row gap-2 p-4 items-center cursor-pointer"
-        onClick={() => setShowDetails(!showDetails)}
-      >
-        {/* Checkbox and Color Indicator (Not part of the click area for collapse) */}
-        <div
-          className="flex items-center gap-2"
-          onClick={(e) => e.stopPropagation()} // Prevent click from triggering collapse
-        >
-          <input
-            type="checkbox"
-            className="accent-blue-500 cursor-pointer"
-            checked={isCompleted}
-            onChange={handleToggleComplete}
-            title={isCompleted ? "Mark as Active" : "Mark as Complete"}
-          />
-          <div className={`h-8 w-2 rounded`} style={{ backgroundColor: color }} />
-        </div>
-
-        {/* Task Title (Main Clickable Area) */}
-        <div className="flex-1 min-w-0">
-          <h1
-            className={`text-white font-semibold text-lg truncate ${
-              isCompleted ? "line-through" : ""
-            }`}
-          >
-            {title}
-          </h1>
-        </div>
-
-        {/* Priority and Collapse Icon */}
-        <div className="flex items-center gap-3 text-sm ml-auto">
-          {/* Priority Tag */}
-          <span className={`font-medium ${getPriorityColor(priority)} hidden sm:inline`}>
-            ⚡ {priority}
-          </span>
-          
-          {/* Collapse/Expand Icon */}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className={`w-5 h-5 text-gray-400 transform transition-transform ${
-              showDetails ? "rotate-180" : ""
-            }`}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
-        </div>
-
-        {/* Menu button (Not part of the click area for collapse) */}
-        <div className="relative" onClick={(e) => e.stopPropagation()}>
-          <button
-            onClick={() => setShowMenu(!showMenu)}
-            className="text-gray-400 hover:text-white p-1"
-            title="More options"
-          >
-            {/* The three-dot icon */}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
-              />
-            </svg>
-          </button>
-
-          {/* Menu Dropdown */}
-          {showMenu && (
-            <div className="absolute right-0 top-8 bg-gray-700 rounded-md shadow-lg z-20 py-1 min-w-32">
-              {onTaskEdit && (
-                <button
-                  onClick={() => {
-                    setShowMenu(false);
-                    onTaskEdit({
-                      id,
-                      taskName: title,
-                      description,
-                      dueDate,
-                      dueTime,
-                      priority,
-                      category,
-                      tags,
-                      color,
-                      completed,
-                    } as Task);
-                  }}
-                  className="block w-full text-left px-4 py-2 text-blue-400 hover:bg-gray-600 text-sm"
-                >
-                  Edit
-                </button>
-              )}
-              <button
-                onClick={handleDeleteTask}
-                className="block w-full text-left px-4 py-2 text-red-400 hover:bg-gray-600 text-sm"
-              >
-                Delete
-              </button>
-            </div>
-          )}
-        </div>
+      <div className="flex items-center">
+        <TaskHeader
+          title={title}
+          color={color}
+          isCompleted={isCompleted}
+          priority={priority}
+          showDetails={showDetails}
+          onToggleComplete={handleToggleComplete}
+          onToggleDetails={() => setShowDetails(!showDetails)}
+        />
+        <TaskMenu
+          showMenu={showMenu}
+          setShowMenu={setShowMenu}
+          onTaskEdit={onTaskEdit}
+          onTaskDelete={handleDeleteTask}
+          taskData={taskData}
+        />
       </div>
 
-      {/* Collapsible Content */}
-      <div
-        className={`overflow-hidden transition-all duration-300 ${
-          showDetails ? "max-h-96 opacity-100 p-4 pt-0" : "max-h-0 opacity-0"
-        }`}
-      >
-        <div className="border-t border-gray-700 pt-3">
-          {/* Description */}
-          {description && (
-            <p
-              className={`text-gray-300 text-base mb-3 ${
-                isCompleted ? "line-through" : ""
-              }`}
-            >
-              {description}
-            </p>
-          )}
-
-          {/* Metadata (Date, Time, Category, Priority on smaller screens) */}
-          <div className="flex flex-col gap-2 text-sm">
-            <div className="flex items-center gap-3">
-              <span className="text-gray-400">
-                📅 {formatDate(dueDate)} {dueTime && `⏰ ${formatTime(dueTime)}`}
-              </span>
-              <span className={`font-medium ${getPriorityColor(priority)} inline sm:hidden`}>
-                ⚡ {priority}
-              </span>
-              <span className="text-blue-300">📁 {category}</span>
-            </div>
-            
-            {/* Tags */}
-            {tags && tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-2">
-                {tags.map((tag, idx) => (
-                  <span
-                    key={idx}
-                    className="bg-blue-700 text-white px-2 py-0.5 rounded text-xs whitespace-nowrap"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
+      <TaskDetails
+        description={description}
+        dueDate={dueDate}
+        dueTime={dueTime}
+        priority={priority}
+        category={category}
+        tags={tags}
+        isCompleted={isCompleted}
+        showDetails={showDetails}
+      />
     </div>
   );
 }
