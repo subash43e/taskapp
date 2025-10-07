@@ -32,7 +32,7 @@ export const TaskHeader = ({
 
   return (
     <div
-      className="flex flex-row gap-2 p-4 items-center cursor-pointer"
+      className="flex flex-row gap-2 p-4 items-center cursor-pointer w-full"
       onClick={onToggleDetails}
     >
       <div
@@ -63,7 +63,7 @@ export const TaskHeader = ({
       </div>
 
       <div className="flex items-center gap-3 text-sm ml-auto">
-        <span className={`font-medium ${getPriorityColor(priority)} hidden sm:inline`}>
+        <span className={`font-medium ${getPriorityColor(priority)} hidden sm:inline mr-4`}>
           ⚡ {priority}
         </span>
         

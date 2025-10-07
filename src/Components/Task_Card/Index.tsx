@@ -213,27 +213,31 @@ export default function Task_Card({
 
   return (
     <div
-      className={`bg-[#1f2937] rounded-md mb-3 transition-all duration-200 relative group ${
+      className={`bg-[#1f2937] rounded-md mb-3 transition-all duration-200 relative group hover:bg-[#1a2231] ${
         isCompleted ? "opacity-60" : ""
       }`}
     >
-      <div className="flex items-center">
-        <TaskHeader
-          title={title}
-          color={color}
-          isCompleted={isCompleted}
-          priority={priority}
-          showDetails={showDetails}
-          onToggleComplete={handleToggleComplete}
-          onToggleDetails={() => setShowDetails(!showDetails)}
-        />
-        <TaskMenu
-          showMenu={showMenu}
-          setShowMenu={setShowMenu}
-          onTaskEdit={onTaskEdit}
-          onTaskDelete={handleDeleteTask}
-          taskData={taskData}
-        />
+      <div className="flex items-center justify-between w-full">
+        <div className="flex-grow">
+          <TaskHeader
+            title={title}
+            color={color}
+            isCompleted={isCompleted}
+            priority={priority}
+            showDetails={showDetails}
+            onToggleComplete={handleToggleComplete}
+            onToggleDetails={() => setShowDetails(!showDetails)}
+          />
+        </div>
+        <div className="flex-shrink-0">
+          <TaskMenu
+            showMenu={showMenu}
+            setShowMenu={setShowMenu}
+            onTaskEdit={onTaskEdit}
+            onTaskDelete={handleDeleteTask}
+            taskData={taskData}
+          />
+        </div>
       </div>
 
       <TaskDetails
