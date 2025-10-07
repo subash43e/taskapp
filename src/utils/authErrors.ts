@@ -50,7 +50,7 @@ export const AUTH_ERROR_MESSAGES: { [key: string]: string } = {
  * @param error - Firebase authentication error
  * @returns User-friendly error message
  */
-export const formatAuthError = (error: unknown): string => {
+  export const formatAuthError = (error: unknown): string => {
   if (!error) return 'An unknown error occurred. Please try again.';
   const err = error as { code?: string; message?: string };
   // Check if it's a Firebase error with a code
@@ -73,7 +73,6 @@ export const formatAuthError = (error: unknown): string => {
     if (message.includes('timeout')) {
       return 'The request timed out. Please try again.';
     }
-    
     if (message.includes('quota') || message.includes('limit')) {
       return 'Too many requests. Please try again later.';
     }
@@ -159,5 +158,3 @@ export const validateAuthForm = (email: string, password: string): {
     errors
   };
 };
-
-export default formatAuthError;
