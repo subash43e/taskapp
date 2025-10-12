@@ -10,7 +10,7 @@ export const TaskTags = ({ tags }: TaskTagsProps) => {
       {tags.map((tag, idx) => (
         <span
           key={idx}
-          className="bg-blue-700 text-white px-2 py-0.5 rounded text-xs whitespace-nowrap"
+          className="bg-[#16a085] text-white px-2 py-0.5 rounded text-xs whitespace-nowrap"
         >
           {tag}
         </span>

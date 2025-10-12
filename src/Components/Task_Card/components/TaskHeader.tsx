@@ -20,9 +20,9 @@ export const TaskHeader = ({
   const getPriorityColor = (priority: string) => {
     switch (priority.toLowerCase()) {
       case "high":
-        return "text-red-400";
+        return "text-[#e74c3c]";
       case "medium":
-        return "text-yellow-400";
+        return "text-[#ffbe76]";
       case "low":
         return "text-green-400";
       default:
@@ -41,7 +41,7 @@ export const TaskHeader = ({
       >
         <input
           type="checkbox"
-          className="accent-blue-500 cursor-pointer"
+          className="accent-[#16a085] cursor-pointer"
           checked={isCompleted}
           onChange={onToggleComplete}
           title={isCompleted ? "Mark as Active" : "Mark as Complete"}
@@ -54,7 +54,7 @@ export const TaskHeader = ({
 
       <div className="flex-1 min-w-0">
         <h1
-          className={`text-white font-semibold text-lg truncate ${
+          className={`text-[#f4f6f8] font-semibold text-lg truncate ${
             isCompleted ? "line-through" : ""
           }`}
         >

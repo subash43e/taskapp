@@ -8,6 +8,7 @@ import {
   query,
   where,
   serverTimestamp,
+  writeBatch,
 } from "firebase/firestore";
 import { auth, db } from "./firebase";
 
@@ -25,6 +26,7 @@ export interface Task {
   completed: boolean;
   createdAt: string;
   updatedAt: string;
+  reminders?: Date[];
 }
 
 function getUserTasksCollection(userId: string) {
@@ -34,18 +36,36 @@ function getUserTasksCollection(userId: string) {
 
 export async function createTask(
   userId: string,
-  taskData: Omit<Task, "id" | "userId" | "createdAt" | "updatedAt">
+  taskData: Omit<Task, "id" | "userId" | "createdAt" | "updatedAt">,
+  reminders?: Date[]
 ): Promise<string> {
   if (!userId) throw new Error("User must be authenticated to create tasks");
+
   const tasksCollection = getUserTasksCollection(userId);
-  const newTask = {
+  const newTaskRef = doc(tasksCollection);
+
+  const batch = writeBatch(db);
+
+  const task = {
     ...taskData,
     userId,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   };
-  const docRef = await addDoc(tasksCollection, newTask);
-  return docRef.id;
+
+  batch.set(newTaskRef, task);
+
+  if (reminders && reminders.length > 0) {
+    const remindersCollection = collection(newTaskRef, "reminders");
+    reminders.forEach((reminder) => {
+      const reminderRef = doc(remindersCollection);
+      batch.set(reminderRef, { time: reminder });
+    });
+  }
+
+  await batch.commit();
+
+  return newTaskRef.id;
 }
 
 export async function getUserTasks(userId: string): Promise<Task[]> {

@@ -45,7 +45,7 @@ next-env.d.ts
 .continue
 .idea
 .vscode
-
-#opencode
+.gemini
 opencode.json
 .aider*
+

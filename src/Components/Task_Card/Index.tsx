@@ -213,7 +213,7 @@ export default function Task_Card({
 
   return (
     <div
-      className={`bg-[#1f2937] rounded-md mb-3 transition-all duration-200 relative group hover:bg-[#1a2231] ${
+      className={`bg-[#1e2430] rounded-md mb-3 transition-all duration-200 relative group hover:bg-[#1a2029] ${
         isCompleted ? "opacity-60" : ""
       }`}
     >
