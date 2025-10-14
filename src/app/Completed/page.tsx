@@ -1,6 +1,6 @@
 "use client"
 import Task_Card from "@/src/Components/Task_Card/Index";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import Loading from "../Inbox/Loading";
 import SearchBar from "@/src/Components/SearchBar";
 import ProtectedRoute from "@/src/Components/ProtectedRoute";
@@ -16,7 +16,7 @@ export default function CompletedPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const user = useSelector((state: RootState) => state.auth.user);
 
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     try {
       dispatch(setTasksLoading(true));
       
@@ -36,13 +36,13 @@ export default function CompletedPage() {
     } finally {
       dispatch(setTasksLoading(false));
     }
-  };
+  }, [dispatch, user]);
 
   useEffect(() => {
     if (user?.uid) {
       fetchTasks();
     }
-  }, [user]);
+  }, [fetchTasks, user?.uid]);
 
   // Filter completed tasks from all tasks
   const tasks = useMemo(() => {

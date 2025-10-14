@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
 import { auth } from '../../Firebase/firebase';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser, setLoading, setError, clearError } from '../../authSlice';
@@ -10,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { formatAuthError, validateAuthForm } from '../../utils/authErrors';
 import AuthError from '../../Components/AuthError';
+import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 
 export default function Signup() {
   const [email, setEmail] = useState('');
@@ -75,8 +75,6 @@ export default function Signup() {
     
     dispatch(setLoading(true));
     try {
-      // Create the account
-      const result = await createUserWithEmailAndPassword(auth, email, password);
       
       // Immediately sign out the user
       await signOut(auth);
@@ -131,7 +129,7 @@ export default function Signup() {
         dispatch(setLoading(false));
         router.push('/login');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       const formattedError = formatAuthError(error);
       dispatch(setError(formattedError));
     }

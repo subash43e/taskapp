@@ -1,9 +1,8 @@
 "use client"
 import Task_Card from "@/src/Components/Task_Card/Index";
 import { getUserTasks, type Task } from "@/src/Firebase/taskService";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import { showTaskEdit } from "@/src/store";
 import { RootState } from '@/src/store';
 import { setTasks, setTasksLoading, setTasksError } from '@/src/tasksSlice';
 import Loading from "../Inbox/Loading";
@@ -17,7 +16,7 @@ export default function UpcomingPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const user = useSelector((state: RootState) => state.auth.user);
 
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     try {
       dispatch(setTasksLoading(true));
       
@@ -37,13 +36,13 @@ export default function UpcomingPage() {
     } finally {
       dispatch(setTasksLoading(false));
     }
-  };
+  },[dispatch,user]);
 
   useEffect(() => {
     if (user?.uid) {
       fetchTasks();
     }
-  }, [user]);
+  }, [fetchTasks, user]);
 
   // Filter upcoming tasks from all tasks
   const tasks = useMemo(() => {

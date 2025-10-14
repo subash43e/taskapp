@@ -280,7 +280,7 @@ export default function SettingsPage() {
           <p><strong>Custom API:</strong> Use your own email API endpoint (SendGrid, Mailgun, etc.)</p>
         </div>
         <p className="text-gray-300 text-sm mt-3">
-          Browser notifications work immediately once permission is granted and don't require email configuration.
+          Browser notifications work immediately once permission is granted and don&apos;t require email configuration.
         </p>
       </div>
     </div>

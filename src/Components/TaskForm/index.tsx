@@ -183,13 +183,13 @@ export default function TaskForm({ mode, task, onClose, onTaskUpdate }: TaskForm
         // Schedule reminders for the new task if it has date and time
         if (dueDate && dueTime) {
           notificationScheduler.scheduleTaskReminder({
-            id: taskId,
+            taskId: taskId,
             taskName: taskName.trim(),
             dueDate,
             dueTime,
             userEmail: user?.email || "user@example.com",
             category: categoryInput.trim(),
-            priority
+            priority: priority as 'High' | 'Medium' | 'Low' | undefined
           });
           
           console.log(`Scheduled reminders for task: ${taskName}`);
@@ -255,6 +255,7 @@ export default function TaskForm({ mode, task, onClose, onTaskUpdate }: TaskForm
           </h2>
           <button
             onClick={handleClose}
+            type="button"
             className="mb-6 hover:bg-red-400 rounded-xl bg-red-600 text-white p-1"
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -352,7 +353,7 @@ export default function TaskForm({ mode, task, onClose, onTaskUpdate }: TaskForm
               )}
               {showSuggestions && categoryInput && !filteredCategories.some(c => c.toLowerCase() === categoryInput.toLowerCase()) && mode === 'create' && (
                 <div className="absolute z-10 bg-gray-700 border border-gray-600 rounded-lg mt-1 w-full">
-                  <div className="px-4 py-2 text-green-400">Add "{categoryInput}" as new category</div>
+                  <div className="px-4 py-2 text-green-400">Add {categoryInput} as new category</div>
                 </div>
               )}
             </div>
@@ -420,7 +421,7 @@ export default function TaskForm({ mode, task, onClose, onTaskUpdate }: TaskForm
                     className="px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-600"
                     onMouseDown={() => handleTagSelect(tagInput.trim())}
                   >
-                    Add "{tagInput}" as new tag
+                    Add {tagInput} as new tag
                   </div>
                 </div>
               )}

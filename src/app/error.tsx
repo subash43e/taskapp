@@ -31,7 +31,7 @@ export default function Error({
           Something went wrong!
         </h1>
         <p className="text-gray-600 mb-8">
-          We're sorry, but something unexpected happened. Our team has been notified.
+          We&apos;re sorry, but something unexpected happened. Our team has been notified.
         </p>
 
         {/* Error Details (only in development) */}

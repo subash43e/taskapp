@@ -52,13 +52,15 @@ const authSlice = createSlice({
 export const { setUser, setLoading, setError, clearError, logout } = authSlice.actions;
 
 // Thunk for logout
-export const logoutUser = () => async (dispatch: unknown) => {
+import type { Dispatch } from 'redux';
+
+export const logoutUser = () => async (dispatch: Dispatch) => {
   try {
     await signOut(auth);
-    (dispatch as Function)(logout());
+    dispatch(logout());
   } catch (error: unknown) {
     const formattedError = formatAuthError(error);
-    (dispatch as Function)(setError(formattedError));
+    dispatch(setError(formattedError));
   }
 };
 

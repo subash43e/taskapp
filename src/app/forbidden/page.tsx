@@ -23,7 +23,7 @@ export default function Forbidden() {
           Access Forbidden
         </h1>
         <p className="text-gray-600 mb-8">
-          You don't have permission to access this resource. Please sign in with the appropriate account.
+          You don&apos;t have permission to access this resource. Please sign in with the appropriate account.
         </p>
 
         {/* Action Buttons */}

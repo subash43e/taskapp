@@ -48,4 +48,6 @@ next-env.d.ts
 .gemini
 opencode.json
 .aider*
-
+AGENTS.md
+.opencode
+openspec

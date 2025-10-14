@@ -1,7 +1,7 @@
 "use client"
 import Task_Card from "@/src/Components/Task_Card/Index";
 import { getUserTasks, type Task } from "@/src/Firebase/taskService";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { showTaskEdit, RootState } from "@/src/store";
 import { setTasks, setTasksLoading, setTasksError } from '@/src/tasksSlice';
@@ -18,7 +18,7 @@ export default function Home() {
   const [sortBy, setSortBy] = useState("dueDate"); // dueDate, priority, created
   const user = useSelector((state: RootState) => state.auth.user);
 
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     try {
       dispatch(setTasksLoading(true));
       
@@ -38,13 +38,13 @@ export default function Home() {
     } finally {
       dispatch(setTasksLoading(false));
     }
-  };
+  },[dispatch,user])
 
   useEffect(() => {
     if (user?.uid) {
       fetchTasks();
     }
-  }, [user]);
+  }, [fetchTasks,user]);
 
   // Filter and sort tasks
   const getFilteredAndSortedTasks = () => {
