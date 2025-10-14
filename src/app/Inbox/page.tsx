@@ -117,6 +117,7 @@ export default function Home() {
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
                 className="flex items-center gap-2 cursor-pointer bg-[#232b38] rounded-lg px-6 py-3 text-gray-200 shadow hover:bg-[#2c3545] transition-colors border-none outline-none"
+                title="Task_Filter_btn"
               >
                 <option value="all">All Tasks</option>
                 <option value="active">Active</option>
@@ -130,6 +131,7 @@ export default function Home() {
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
                 className="flex items-center gap-2 cursor-pointer bg-[#232b38] rounded-lg px-6 py-3 text-gray-200 shadow hover:bg-[#2c3545] transition-colors border-none outline-none"
+                title="Task_sorting_btn"
               >
                 <option value="created">Sort by Created</option>
                 <option value="dueDate">Sort by Due Date</option>
