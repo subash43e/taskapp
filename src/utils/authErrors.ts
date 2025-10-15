@@ -93,7 +93,7 @@ export const AUTH_ERROR_MESSAGES: { [key: string]: string } = {
  * @returns Validation result object
  */
 export const validateEmail = (email: string): { isValid: boolean; message?: string } => {
-  if (email.trim()) {
+  if (!email.trim()) {
     return { isValid: false, message: 'Email address cannot be empty. Email address is required.' };
   }
   
